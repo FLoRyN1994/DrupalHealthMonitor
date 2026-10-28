@@ -74,5 +74,16 @@ _Latest session first. Who, date, what's half-done, what's next, gotchas._
   github.com/settings/installations → Railway → Configure → repository access first.
   Gotcha: `DRUPAL_ADMIN_PASS` was generated with `openssl rand -base64 24` and stored
   directly in Railway (not written anywhere else) — read it back from the Railway
-  dashboard if it's ever needed. Next: start M2 — `hm_core` module skeleton and the
-  Client/Site/Snapshot/Finding entities.
+  dashboard if it's ever needed. Second gotcha, found right after "done": the site
+  returned 200 but served the stock "Welcome to nginx!" page, not Drupal. Both
+  Railway domains (generated + custom) had defaulted their **target port to 80**;
+  our container actually listens on `$PORT` (8080) per the Dockerfile. Fixed with
+  `railway domain update <domain> --port 8080 --service app` on both domains — see
+  `docs/RAILWAY_SETUP.md` step 6. Also hardened `docker/entrypoint.sh` to re-remove
+  `/etc/nginx/sites-enabled/default` at container start (it was reappearing at build
+  time despite the Dockerfile's `rm`, most likely recreated by a dpkg trigger during
+  `install-php-extensions`'s own apt install/purge cycle — not fully root-caused, but
+  harmless to remove defensively every container start). Confirmed
+  `https://health-monitor.tofdev.com` now actually renders Drupal's install/login
+  page. Next: start M2 — `hm_core` module skeleton and the Client/Site/Snapshot/Finding
+  entities.
