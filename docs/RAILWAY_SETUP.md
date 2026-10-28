@@ -51,6 +51,11 @@ This runs `drush deploy` on every deploy after the first, and installs the site 
   Both are required; the domain stays unverified with only one.
 - Wait for the green check mark (usually under an hour, up to 72h for DNS propagation).
   SSL is issued automatically once verified.
+- **Gotcha:** both the generated and custom domain default their target port to 80,
+  not the Dockerfile's `EXPOSE 8080`/`$PORT`. If the site loads but shows the stock
+  "Welcome to nginx!" page instead of Drupal, the domain is routing to the wrong port.
+  Fix each domain's **Target Port** to `8080` (Settings → Networking, or
+  `railway domain update <domain> --port 8080 --service app`).
 
 ## 7. Cron service (add once drush cron work exists — M3+)
 **+ New** → **Empty Service**, same GitHub repo, same Dockerfile.
