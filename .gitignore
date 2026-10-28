@@ -1,0 +1,21 @@
+# Composer-managed code
+/vendor/
+/web/core/
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+/web/libraries/
+/recipes/contrib/
+
+# Site files and local settings
+/web/sites/*/files/
+/web/sites/*/private/
+/web/sites/*/settings.local.php
+/web/sites/*/services.local.yml
+
+# Secrets and IDE
+.env
+.env.*
+.idea/
+.vscode/
+.DS_Store
