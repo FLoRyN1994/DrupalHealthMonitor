@@ -4,21 +4,21 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done
 Update this file at the end of every session (see AGENTS.md).
 
 ## M1 — Foundation
-- [ ] DDEV project (PHP 8.4, MySQL 8.4), Drupal 11.4 via `drupal/recommended-project`
-- [ ] Git repo, `.gitignore`, push to GitHub
-- [ ] Config sync directory `config/sync`, first export
-- [ ] Dev tooling: drush, phpstan + phpstan-drupal, coder (PHPCS), drupal-rector, phpunit
-- [ ] `phpstan.neon`, `phpcs.xml`
-- [ ] GitHub Actions CI: PHPCS, PHPStan, PHPUnit
+- [x] DDEV project (PHP 8.4, MySQL 8.4), Drupal 11.4 via `drupal/recommended-project`
+- [x] Git repo, `.gitignore`, push to GitHub (github.com/FLoRyN1994/DrupalHealthMonitor)
+- [x] Config sync directory `config/sync`, first export
+- [x] Dev tooling: drush, phpstan + phpstan-drupal, coder (PHPCS), drupal-rector, phpunit (via drupal/core-dev)
+- [x] `phpstan.neon`, `phpcs.xml`
+- [x] GitHub Actions CI: PHPCS, PHPStan, PHPUnit, Docker build (.github/workflows/ci.yml)
 - [ ] README skeleton
 
 ## M1b — Deployment (do right after M1, deploy early and often)
-- [ ] `Dockerfile` (PHP 8.4 FPM + nginx) + `.dockerignore`
-- [ ] `settings.php` reads DB, hash salt, trusted hosts from env vars
+- [x] `Dockerfile` (PHP 8.4 FPM + nginx) + `.dockerignore`
+- [x] `settings.php` reads DB, hash salt, trusted hosts from env vars (settings.railway.php)
 - [ ] Railway project: `app`, `db` (MySQL 8.4), `cron` services, volumes
 - [ ] Railway GitHub autodeploy from `main` with Wait for CI, pre-deploy `drush deploy`
 - [ ] Custom domain health-monitor.tofdev.com (CNAME + TXT), HTTPS verified
-- [ ] CI workflow triggers on `push` to `main` and on pull requests
+- [x] CI workflow triggers on `push` to `main` and on pull requests
 
 ## M2 — Data model
 - [ ] `hm_core` module skeleton
@@ -52,4 +52,9 @@ Update this file at the end of every session (see AGENTS.md).
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
-- (empty — project not started)
+- 2026-10-28, Claude — M1 done except README; M1b code done (Dockerfile, nginx, entrypoint,
+  predeploy script, settings.railway.php, CI workflow with Docker build job). Not done yet:
+  creating the actual Railway project/services, DNS records, GitHub secrets (none needed yet —
+  Railway reads repo directly). Next: push this commit, then follow
+  docs/RAILWAY_SETUP.md to create the Railway project. Gotcha: Railway's pre-deploy command
+  must be set to `sh scripts/railway-predeploy.sh` in service settings (not in code).

@@ -1,0 +1,93 @@
+# CI for Drupal Health Monitor.
+# Runs on every pull request and on every push to main.
+# Railway deploys main only when this workflow passes ("Wait for CI").
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  # Never cancel runs on main: Railway waits for them before deploying.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  quality:
+    name: Code quality and tests
+    runs-on: ubuntu-latest
+
+    services:
+      # Database for kernel tests (same version as DDEV and Railway).
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: drupal
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+
+    env:
+      SIMPLETEST_DB: mysql://root:root@127.0.0.1:3306/drupal
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: gd, pdo_mysql, zip, intl
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Validate composer.json
+        run: composer validate --no-check-publish --no-check-all
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Detect custom code
+        id: custom_code
+        run: |
+          if find web/modules/custom web/themes/custom -type f \( -name '*.php' -o -name '*.module' -o -name '*.theme' \) | grep -q .; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No custom PHP code yet, skipping PHPCS, PHPStan and PHPUnit."
+          fi
+
+      - name: Coding standards (PHPCS)
+        if: steps.custom_code.outputs.present == 'true'
+        run: vendor/bin/phpcs
+
+      - name: Static analysis (PHPStan)
+        if: steps.custom_code.outputs.present == 'true'
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+
+      - name: Tests (PHPUnit unit + kernel)
+        if: steps.custom_code.outputs.present == 'true'
+        run: |
+          if find web/modules/custom -path '*/tests/*' -name '*Test.php' | grep -q .; then
+            vendor/bin/phpunit -c web/core web/modules/custom
+          else
+            echo "No tests yet."
+          fi
+
+  docker:
+    name: Docker image builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the production image (same Dockerfile Railway uses)
+        run: docker build --tag health-monitor:ci .

@@ -1,0 +1,13 @@
+# PHPStan for custom code. phpstan-drupal and deprecation rules load automatically
+# via phpstan/extension-installer (part of drupal/core-dev).
+parameters:
+  level: 6
+  paths:
+    - web/modules/custom
+    - web/themes/custom
+  excludePaths:
+    - */node_modules/*
+  drupal:
+    drupal_root: web
+  # Empty folders are fine while the project is young.
+  reportUnmatchedIgnoredErrors: false
