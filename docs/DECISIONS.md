@@ -15,3 +15,4 @@ Append-only log. Format: date — decision — why.
 - 2026-10-28 — Database: MySQL 8.4 LTS instead of MariaDB, locally (DDEV) and on Railway — owner's usual stack, same as Acquia; 8.0 is past end of life.
 - 2026-10-28 — Railway image is a single container (PHP-FPM + nginx), built from the repo Dockerfile; cron runs as a second Railway service from the same image with a different start command — simplest topology Railway supports well, avoids a separate web-server image to maintain.
 - 2026-10-28 — First deploy installs from config/sync via `drush site:install --existing-config`; every later deploy runs `drush deploy` — standard Drupal CI/CD pattern, idempotent.
+- 2026-10-28 — Railway project/services provisioned with the `railway` CLI, not the dashboard, where possible (project, app/MySQL services, variables, volume, domain) — repeatable, scriptable; only Pre-Deploy Command and Wait for CI have no CLI equivalent and stay dashboard-only.

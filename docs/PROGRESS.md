@@ -15,9 +15,15 @@ Update this file at the end of every session (see AGENTS.md).
 ## M1b — Deployment (do right after M1, deploy early and often)
 - [x] `Dockerfile` (PHP 8.4 FPM + nginx) + `.dockerignore`
 - [x] `settings.php` reads DB, hash salt, trusted hosts from env vars (settings.railway.php)
-- [ ] Railway project: `app`, `db` (MySQL 8.4), `cron` services, volumes
-- [ ] Railway GitHub autodeploy from `main` with Wait for CI, pre-deploy `drush deploy`
+- [x] Railway project `health-monitor`: `app` service (linked to GitHub repo, `main`),
+  `MySQL` service, volume on `app` at `web/sites/default/files`, `app` variables wired
+  (`DB_*` as `${{MySQL.*}}` refs, `DRUPAL_HASH_SALT`, `DRUPAL_ADMIN_PASS`,
+  `DRUPAL_TRUSTED_HOST`) — all via `railway` CLI
+- [ ] Railway dashboard-only steps (CLI has no equivalent): pre-deploy command
+  `sh scripts/railway-predeploy.sh` on `app`, Wait for CI toggle on `app`
+- [ ] First deploy triggered and verified on the `*.up.railway.app` domain
 - [ ] Custom domain health-monitor.tofdev.com (CNAME + TXT), HTTPS verified
+- [ ] Cron service (deferred to M3+, once there's a queue worth running)
 - [x] CI workflow triggers on `push` to `main` and on pull requests
 
 ## M2 — Data model
@@ -52,9 +58,16 @@ Update this file at the end of every session (see AGENTS.md).
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
-- 2026-10-28, Claude — M1 done except README; M1b code done (Dockerfile, nginx, entrypoint,
-  predeploy script, settings.railway.php, CI workflow with Docker build job). Not done yet:
-  creating the actual Railway project/services, DNS records, GitHub secrets (none needed yet —
-  Railway reads repo directly). Next: push this commit, then follow
-  docs/RAILWAY_SETUP.md to create the Railway project. Gotcha: Railway's pre-deploy command
-  must be set to `sh scripts/railway-predeploy.sh` in service settings (not in code).
+- 2026-10-28, Claude — M1 done (README skeleton added). M1b: Railway project
+  `health-monitor` created via `railway` CLI — `app` service linked to the GitHub repo
+  on `main`, `MySQL` service added, volume mounted on `app`, all `app` variables set
+  (`DB_*` as `${{MySQL.*}}` refs, generated `DRUPAL_HASH_SALT`/`DRUPAL_ADMIN_PASS`,
+  `DRUPAL_TRUSTED_HOST`). No deploy triggered yet. Next: in the Railway dashboard, set
+  `app`'s Pre-Deploy Command to `sh scripts/railway-predeploy.sh` and enable Wait for CI
+  (Settings → Deploy) — the CLI has no equivalent for either. Then trigger a deploy,
+  confirm the site loads on the generated `*.up.railway.app` domain
+  (`app-production-9474.up.railway.app`), then add the custom domain
+  `health-monitor.tofdev.com` and its CNAME/TXT records at the DNS provider. Gotcha:
+  `DRUPAL_ADMIN_PASS` was generated with `openssl rand -base64 24` and stored directly in
+  Railway (not written anywhere else) — if it's ever needed, read it back from the
+  Railway dashboard, not from here.
