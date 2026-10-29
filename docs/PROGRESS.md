@@ -30,15 +30,15 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## M2 — Data model
 - [x] `hm_core` module skeleton
-- [ ] Entities: Client, Site, Snapshot, Finding (+ admin forms, list builders)
+- [x] Entities: Client, Site, Snapshot, Finding (+ admin forms, list builders)
 - [ ] Views: clients list, sites list
-- [ ] Kernel tests for entity CRUD
+- [x] Kernel tests for entity CRUD
 
 ## M3 — Agent and collection
 - [ ] `hm_agent` module: `/hm-agent/status` route, HMAC + timestamp check, collector service
 - [ ] Two extra DDEV sites as demo clients
 - [ ] Monitor: queue worker fetching snapshots, uptime ping
-- [ ] Key module for secrets
+- [x] Key module for secrets
 
 ## M4 — Analysis
 - [ ] drupal.org release data client (cached)
@@ -60,13 +60,15 @@ Update this file at the end of every session (see AGENTS.md).
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
-- 2026-10-29, Codex — Started M2 on `feat/m2-data-model`. Added and enabled the
-  `hm_core` module, including a Drupal 11 OOP help hook and unit test; exported
-  `core.extension`. PHPCS, PHPStan level 6, and PHPUnit pass in DDEV on PHP 8.4
-  (1 test, 2 assertions). Next: implement the Client, Site, Snapshot, and Finding
-  content entities with admin forms and list builders. PHPStan currently emits an
-  upstream deprecation warning for the configured `drupal_root` parameter, but the
-  analysis passes with no errors.
+- 2026-10-29, Codex — M2 data model is implemented on `feat/m2-data-model`:
+  `hm_core`, Client/Site/Snapshot/Finding content entities, admin forms, tailored
+  list builders, permissions, menus, actions, Views data handlers, and kernel CRUD
+  coverage. Site stores only an entity reference to a Key record; Key 1.22 is now
+  installed ahead of M3. Composer audit found the newly published CVE-2026-45070
+  in Symfony Mime 7.4.19, so the lock was updated to patched 7.4.22; audit is clean.
+  PHPCS, PHPStan level 6, and PHPUnit pass in DDEV/PHP 8.4 (2 tests, 18 assertions).
+  Key itself emits two Drupal 13 annotation deprecations; custom code is clean.
+  Next: create the configured Views for Client and Site lists to finish M2.
 
 - 2026-10-28, Claude — M1 and M1b both done. First deploy succeeded: predeploy script
   ran `drush site:install --existing-config` against the Railway MySQL service, config

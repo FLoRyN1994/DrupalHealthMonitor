@@ -3,3 +3,7 @@ type: module
 description: Provides fleet monitoring entities, collection, analysis, and reporting.
 package: Health Monitor
 core_version_requirement: ^11.4
+dependencies:
+  - drupal:options
+  - drupal:views
+  - key:key

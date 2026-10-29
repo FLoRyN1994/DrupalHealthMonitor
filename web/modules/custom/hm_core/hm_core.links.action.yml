@@ -1,0 +1,23 @@
+hm_core.client_add:
+  route_name: entity.hm_client.add_form
+  title: 'Add client'
+  appears_on:
+    - entity.hm_client.collection
+
+hm_core.site_add:
+  route_name: entity.hm_site.add_form
+  title: 'Add site'
+  appears_on:
+    - entity.hm_site.collection
+
+hm_core.snapshot_add:
+  route_name: entity.hm_snapshot.add_form
+  title: 'Add snapshot'
+  appears_on:
+    - entity.hm_snapshot.collection
+
+hm_core.finding_add:
+  route_name: entity.hm_finding.add_form
+  title: 'Add finding'
+  appears_on:
+    - entity.hm_finding.collection

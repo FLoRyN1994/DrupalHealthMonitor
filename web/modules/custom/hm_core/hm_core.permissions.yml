@@ -1,0 +1,4 @@
+administer health monitor:
+  title: 'Administer Health Monitor'
+  description: 'Create, edit, and delete Health Monitor operational data.'
+  restrict access: true

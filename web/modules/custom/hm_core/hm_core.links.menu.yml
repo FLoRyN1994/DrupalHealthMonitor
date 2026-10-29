@@ -1,0 +1,23 @@
+hm_core.clients:
+  title: 'Health Monitor clients'
+  description: 'Manage clients whose sites are monitored.'
+  route_name: entity.hm_client.collection
+  parent: system.admin_content
+
+hm_core.sites:
+  title: 'Health Monitor sites'
+  description: 'Manage monitored Drupal sites.'
+  route_name: entity.hm_site.collection
+  parent: system.admin_content
+
+hm_core.snapshots:
+  title: 'Health Monitor snapshots'
+  description: 'Review collected site snapshots.'
+  route_name: entity.hm_snapshot.collection
+  parent: system.admin_content
+
+hm_core.findings:
+  title: 'Health Monitor findings'
+  description: 'Review analyzed site findings.'
+  route_name: entity.hm_finding.collection
+  parent: system.admin_content
