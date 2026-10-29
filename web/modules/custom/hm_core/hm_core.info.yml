@@ -1,0 +1,5 @@
+name: Health Monitor Core
+type: module
+description: Provides fleet monitoring entities, collection, analysis, and reporting.
+package: Health Monitor
+core_version_requirement: ^11.4
