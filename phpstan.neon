@@ -7,7 +7,5 @@ parameters:
     - web/themes/custom
   excludePaths:
     - */node_modules/*
-  drupal:
-    drupal_root: web
   # Empty folders are fine while the project is young.
   reportUnmatchedIgnoredErrors: false
