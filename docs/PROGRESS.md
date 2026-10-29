@@ -31,7 +31,7 @@ Update this file at the end of every session (see AGENTS.md).
 ## M2 — Data model
 - [x] `hm_core` module skeleton
 - [x] Entities: Client, Site, Snapshot, Finding (+ admin forms, list builders)
-- [ ] Views: clients list, sites list
+- [x] Views: clients list, sites list
 - [x] Kernel tests for entity CRUD
 
 ## M3 — Agent and collection
@@ -67,8 +67,10 @@ _Latest session first. Who, date, what's half-done, what's next, gotchas._
   installed ahead of M3. Composer audit found the newly published CVE-2026-45070
   in Symfony Mime 7.4.19, so the lock was updated to patched 7.4.22; audit is clean.
   PHPCS, PHPStan level 6, and PHPUnit pass in DDEV/PHP 8.4 (2 tests, 18 assertions).
-  Key itself emits two Drupal 13 annotation deprecations; custom code is clean.
-  Next: create the configured Views for Client and Site lists to finish M2.
+  Configured Client and Site Views are exported and available under
+  `/admin/health-monitor/reports/*`; their routes execute successfully. Key itself
+  emits two Drupal 13 annotation deprecations; custom code is clean. M2 is complete.
+  Next: start M3 with the cross-version `hm_agent` endpoint and HMAC validation.
 
 - 2026-10-28, Claude — M1 and M1b both done. First deploy succeeded: predeploy script
   ran `drush site:install --existing-config` against the Railway MySQL service, config

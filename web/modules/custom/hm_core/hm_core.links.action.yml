@@ -3,12 +3,14 @@ hm_core.client_add:
   title: 'Add client'
   appears_on:
     - entity.hm_client.collection
+    - view.hm_clients.page_1
 
 hm_core.site_add:
   route_name: entity.hm_site.add_form
   title: 'Add site'
   appears_on:
     - entity.hm_site.collection
+    - view.hm_sites.page_1
 
 hm_core.snapshot_add:
   route_name: entity.hm_snapshot.add_form
