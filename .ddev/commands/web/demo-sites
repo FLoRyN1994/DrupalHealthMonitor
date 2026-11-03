@@ -66,3 +66,6 @@ provision_site \
   https://client-two.ddev.site \
   'Beacon Staging' \
   minimal
+
+vendor/bin/drush --uri=https://health-monitor.ddev.site \
+  php:script scripts/register-demo-sites.php

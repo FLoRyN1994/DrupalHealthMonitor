@@ -1,0 +1,79 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and schema hooks for Health Monitor Core.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_schema().
+ *
+ * @phpstan-return array<string, array<string, mixed>>
+ */
+function hm_core_schema(): array {
+  $schema['hm_uptime_check'] = [
+    'description' => 'Stores HTTP availability results for monitored sites.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'site_id' => [
+        'description' => 'The monitored hm_site entity ID.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'checked_at' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'http_status' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'response_time_ms' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'success' => [
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'error' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'site_checked' => ['site_id', 'checked_at'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Adds storage for uptime checks.
+ */
+function hm_core_update_11001(): void {
+  if (\Drupal::database()->schema()->tableExists('hm_uptime_check')) {
+    return;
+  }
+
+  $schema = hm_core_schema();
+  \Drupal::database()->schema()->createTable('hm_uptime_check', $schema['hm_uptime_check']);
+}

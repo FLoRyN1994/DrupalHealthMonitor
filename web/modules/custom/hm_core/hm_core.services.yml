@@ -1,0 +1,14 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  logger.channel.hm_core:
+    parent: logger.channel_base
+    arguments: ['hm_core']
+
+  Drupal\hm_core\SiteCheckScheduler: ~
+
+  Drupal\hm_core\SiteCheckRunner:
+    arguments:
+      $logger: '@logger.channel.hm_core'
