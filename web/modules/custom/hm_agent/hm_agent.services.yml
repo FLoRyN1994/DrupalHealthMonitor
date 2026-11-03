@@ -3,8 +3,9 @@ services:
     autowire: true
     autoconfigure: true
 
-  Drupal\hm_agent\:
-    resource: 'src/*'
+  Drupal\hm_agent\Controller\StatusController: ~
+
+  Drupal\hm_agent\SignatureValidator: ~
 
   Drupal\hm_agent\StatusCollector:
     arguments:
