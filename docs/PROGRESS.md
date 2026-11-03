@@ -36,7 +36,7 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## M3 — Agent and collection
 - [x] `hm_agent` module: `/hm-agent/status` route, HMAC + timestamp check, collector service
-- [ ] Two extra DDEV sites as demo clients
+- [x] Two extra DDEV sites as demo clients
 - [ ] Monitor: queue worker fetching snapshots, uptime ping
 - [x] Key module for secrets
 
@@ -59,6 +59,19 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-03, Codex — Completed the second M3 task on
+  `feat/m3-agent-endpoint`. DDEV now provisions two independent multisite demo
+  clients automatically: Acme Production at `client-one.ddev.site` (standard
+  profile, 40 enabled modules) and Beacon Staging at `client-two.ddev.site`
+  (minimal profile, 15 enabled modules). Each has its own database, files,
+  configuration, and randomly generated gitignored HMAC secret. Added idempotent
+  `ddev demo-sites` and `ddev demo-site-secret` commands plus setup docs. A clean
+  `ddev restart` proves the post-start hook is idempotent; unsigned endpoints
+  return 401 and signed endpoints return 200 with zero pending updates. The full
+  DDEV suite still passes (9 tests, 36 assertions), along with PHPStan and PHPCS.
+  Next: implement the monitor queue worker that fetches snapshots and records
+  uptime checks.
 
 - 2026-11-03, Codex — Completed the first M3 task on `feat/m3-agent-endpoint`. Added the
   cross-version, core-only `hm_agent` module with `GET /hm-agent/status`,
