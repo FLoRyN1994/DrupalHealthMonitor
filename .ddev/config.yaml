@@ -24,8 +24,10 @@ database:
 # local host-file routing when it is not.
 use_dns_when_possible: true
 
-# No extra local aliases or external fully qualified domains are currently needed.
-additional_hostnames: []
+# Demo client sites are independent Drupal multisites with their own databases.
+additional_hostnames:
+  - client-one
+  - client-two
 additional_fqdns: []
 
 # Use Composer 2 for dependency management.
@@ -39,3 +41,8 @@ corepack_enable: true
 # Add NAME=value entries here only when local web-container variables are needed.
 # Secrets belong in untracked local settings, never in this committed file.
 web_environment: []
+
+# Provision the two demo clients idempotently after DDEV is ready.
+hooks:
+  post-start:
+    - exec: "bash /mnt/ddev_config/commands/web/demo-sites"

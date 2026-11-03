@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+## Description: Provision the two local Drupal demo client sites
+## Usage: demo-sites
+## Example: ddev demo-sites
+
+set -eu -o pipefail
+
+cd /var/www/html
+
+provision_site() {
+  local site_directory="$1"
+  local database_name="$2"
+  local site_uri="$3"
+  local site_name="$4"
+  local install_profile="$5"
+  local local_settings="web/sites/${site_directory}/settings.local.php"
+
+  mkdir -p "web/sites/${site_directory}/files" "web/sites/${site_directory}/private"
+
+  if [[ ! -f "${local_settings}" ]]; then
+    local hash_salt
+    local agent_secret
+    hash_salt="$(php -r 'echo bin2hex(random_bytes(32));')"
+    agent_secret="$(php -r 'echo bin2hex(random_bytes(32));')"
+    umask 077
+    printf '%s\n' \
+      '<?php' \
+      '' \
+      "\$settings['hash_salt'] = '${hash_salt}';" \
+      "\$settings['hm_agent_secret'] = '${agent_secret}';" \
+      > "${local_settings}"
+  fi
+
+  mysql \
+    --execute="CREATE DATABASE IF NOT EXISTS \`${database_name}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci; GRANT ALL PRIVILEGES ON \`${database_name}\`.* TO 'db'@'%';"
+
+  local installed_table_count
+  installed_table_count="$(mysql --skip-column-names \
+    --execute="SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '${database_name}' AND table_name = 'key_value'")"
+
+  if [[ "${installed_table_count}" == "0" ]]; then
+    local admin_password
+    admin_password="$(php -r 'echo bin2hex(random_bytes(16));')"
+    vendor/bin/drush --uri="${site_uri}" site:install "${install_profile}" \
+      --site-name="${site_name}" \
+      --account-name=admin \
+      --account-pass="${admin_password}" \
+      --yes
+  fi
+
+  vendor/bin/drush --uri="${site_uri}" pm:install hm_agent --yes >/dev/null
+  printf 'Demo client ready: %s\n' "${site_uri}"
+}
+
+provision_site \
+  client-one \
+  hm_client_one \
+  https://client-one.ddev.site \
+  'Acme Production' \
+  standard
+
+provision_site \
+  client-two \
+  hm_client_two \
+  https://client-two.ddev.site \
+  'Beacon Staging' \
+  minimal
