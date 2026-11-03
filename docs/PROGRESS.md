@@ -35,7 +35,7 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Kernel tests for entity CRUD
 
 ## M3 — Agent and collection
-- [~] `hm_agent` module: `/hm-agent/status` route, HMAC + timestamp check, collector service
+- [x] `hm_agent` module: `/hm-agent/status` route, HMAC + timestamp check, collector service
 - [ ] Two extra DDEV sites as demo clients
 - [ ] Monitor: queue worker fetching snapshots, uptime ping
 - [x] Key module for secrets
@@ -60,17 +60,17 @@ Update this file at the end of every session (see AGENTS.md).
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
-- 2026-11-03, Codex — Started M3 on `feat/m3-agent-endpoint`. Added the
+- 2026-11-03, Codex — Completed the first M3 task on `feat/m3-agent-endpoint`. Added the
   cross-version, core-only `hm_agent` module with `GET /hm-agent/status`,
   five-minute timestamp/HMAC authentication, deterministic core/PHP/enabled
   module/pending database update collection, no-store responses, setup docs,
-  and unit coverage for authentication and controller responses. Repository-wide
-  PHPCS and PHPStan pass on host PHP 8.3; the 6 agent unit tests pass with 17
-  assertions. Docker Desktop was stopped, so DDEV/PHP 8.4 and the full custom
-  module test suite could not run. The task intentionally remains `[~]`. Next:
-  start Docker, run all three required DDEV checks, exercise the route on an
-  enabled client site, then mark this item complete before creating the two demo
-  client sites.
+  unit coverage for authentication/controller responses, and a kernel service
+  wiring test. Runtime verification caught and fixed an invalid namespace-prototype
+  service definition. A live request on Drupal 11.4.11/PHP 8.4.27 returned the
+  expected payload; unsigned requests returned 401. The complete custom suite
+  passes in DDEV (9 tests, 36 assertions), as do PHPStan and PHPCS. The only two
+  deprecations are the previously documented Drupal 13 annotation notices from
+  contrib Key. Next: create the two extra DDEV demo client sites.
 
 - 2026-10-29, Codex — M2 data model is implemented on `feat/m2-data-model`:
   `hm_core`, Client/Site/Snapshot/Finding content entities, admin forms, tailored
