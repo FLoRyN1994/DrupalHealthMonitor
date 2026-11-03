@@ -1,0 +1,11 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  Drupal\hm_agent\:
+    resource: 'src/*'
+
+  Drupal\hm_agent\StatusCollector:
+    arguments:
+      $postUpdateRegistry: '@update.post_update_registry'
