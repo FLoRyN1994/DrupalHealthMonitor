@@ -1,0 +1,5 @@
+name: Health Monitor Agent
+type: module
+description: 'Exposes a signed status snapshot for Drupal Health Monitor.'
+package: Health Monitor
+core_version_requirement: ^10.3 || ^11

@@ -1,0 +1,10 @@
+hm_agent.status:
+  path: '/hm-agent/status'
+  defaults:
+    _controller: 'Drupal\hm_agent\Controller\StatusController'
+  requirements:
+    # Authentication is enforced by the timestamped HMAC in the controller.
+    _access: 'TRUE'
+  methods: [GET]
+  options:
+    _no_cache: TRUE
