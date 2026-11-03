@@ -19,8 +19,9 @@ ddev demo-sites
 ```
 
 The command is idempotent. It creates each database only when needed, generates
-gitignored local settings, installs Drupal, and enables `hm_agent`. Retrieve a
-site's generated secret when registering it in the monitor:
+gitignored local settings, installs Drupal, enables `hm_agent`, and registers
+both sites in the monitor. The monitor stores each generated secret through the
+Key module's development-only state provider. Retrieve a secret manually with:
 
 ```shell
 ddev demo-site-secret client-one

@@ -37,7 +37,7 @@ Update this file at the end of every session (see AGENTS.md).
 ## M3 — Agent and collection
 - [x] `hm_agent` module: `/hm-agent/status` route, HMAC + timestamp check, collector service
 - [x] Two extra DDEV sites as demo clients
-- [ ] Monitor: queue worker fetching snapshots, uptime ping
+- [x] Monitor: queue worker fetching snapshots, uptime ping
 - [x] Key module for secrets
 
 ## M4 — Analysis
@@ -59,6 +59,22 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-03, Codex — Completed M3 on `feat/m3-agent-endpoint`. Added cron
+  scheduling for active Sites, an attributed Queue Worker, signed Guzzle
+  collection, payload validation, append-only Snapshot persistence, and the
+  `hm_uptime_check` table. The agent request itself is the uptime check, so every
+  attempt records HTTP status, latency, success, and an optional error. Added an
+  idempotent post-update because this existing install predated `hm_core.install`
+  and had no stored schema version. DDEV provisioning now also registers both
+  demo clients in the monitor with Key's development-only state provider. Real
+  cron runs collected both sites successfully; each now has repeated snapshots
+  and HTTP 200 uptime rows. The full suite passes (11 tests, 55 assertions), as
+  do PHPStan and PHPCS. Exercising Key's provider plugins reveals four upstream
+  deprecations in Key 1.22 (two annotation notices, attribute discovery, and the
+  legacy original-property check); custom code is clean. Next: the M1b Railway
+  cron service is now actionable, then M4 can start with the drupal.org release
+  data client.
 
 - 2026-11-03, Codex — Completed the second M3 task on
   `feat/m3-agent-endpoint`. DDEV now provisions two independent multisite demo
