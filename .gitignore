@@ -7,6 +7,9 @@
 /web/libraries/
 /recipes/contrib/
 
+# Private developer-to-developer implementation handbook.
+/documentation/
+
 # Site files and local settings
 /web/sites/*/files/
 /web/sites/*/private/
