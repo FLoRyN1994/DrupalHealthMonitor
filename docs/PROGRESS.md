@@ -60,6 +60,17 @@ Update this file at the end of every session (see AGENTS.md).
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
+- 2026-11-05, Codex — Fast-forwarded and pushed M2, M3, and the Railway cron
+  work to `main`. GitHub Actions run 42043747870 passed both quality/tests and
+  the production Docker build. Railway's GitHub webhook again did not create a
+  deployment automatically after green CI, so both services were explicitly
+  redeployed from their configured `main` source. The app pre-deploy installed
+  Key and `hm_core`, imported the Client/Site Views, and rebuilt caches; the live
+  domain returns Drupal HTTP 200. The updated cron image executed on schedule.
+  That run exposed the scaffold `admin@example.com` Update Manager recipient and
+  missing sendmail transport, so the placeholder recipient was removed from
+  exported config; real email transport/recipients belong with the alerting work.
+
 - 2026-11-05, Codex — Completed the deferred M1b production cron task on
   `feat/m1b-railway-cron`. Added the Railway `cron` service from the same GitHub
   `main` source/image, with `drush cron`, schedule `*/5 * * * *`, no public
@@ -67,9 +78,9 @@ _Latest session first. Who, date, what's half-done, what's next, gotchas._
   existing MySQL/app variables (no secret values were copied). Deployment
   `4d863894-f5e5-43d6-9baa-82a2b5ab9cc6` built successfully; the first scheduled
   execution started at 14:05:48 UTC and exited normally at 14:05:52 UTC. Production
-  GitHub `main` is still at the M1-era code, so this currently proves Drupal cron
-  execution and will begin M3 snapshot collection after the feature work is merged
-  and deployed. Next: M4's cached drupal.org release-data client.
+  At creation time GitHub `main` was still at the M1-era code; the completed M2/M3
+  work was subsequently merged and deployed. Next: M4's cached drupal.org
+  release-data client.
 
 - 2026-11-03, Codex — Completed M3 on `feat/m3-agent-endpoint`. Added cron
   scheduling for active Sites, an attributed Queue Worker, signed Guzzle
