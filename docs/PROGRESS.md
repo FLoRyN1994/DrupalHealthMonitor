@@ -43,7 +43,7 @@ Update this file at the end of every session (see AGENTS.md).
 ## M4 — Analysis
 - [x] drupal.org release data client (cached)
 - [x] Analyzer: security / update / unsupported / D12 blocker findings
-- [ ] Health score + unit tests
+- [x] Health score + unit tests
 - [ ] Upgrade Status results ingestion
 
 ## M5 — Dashboard UI
@@ -59,6 +59,22 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-05, Codex — Completed the M4 health score on
+  `feat/m4-release-data`. A pure calculator starts at 100 and applies capped,
+  multiplicative penalties for open security, unsupported, D12 blocker, and
+  regular update findings, plus a proportional uptime penalty capped at 30
+  points across the latest 12 checks. Missing uptime history is neutral and the
+  lower boundary is zero. A persistence service reads only open Findings and
+  the bounded uptime window, then avoids saving Site when the score is
+  unchanged. Collection recalculates after every recorded result, including
+  connection failures; on successful collection it analyzes the new Snapshot
+  first, so the score includes current findings. Unit tests cover every weight,
+  multiplicity caps, mixed penalties, downtime, no history, and boundaries; a
+  kernel test covers resolved-finding exclusion and the 12-check window. Next:
+  Upgrade Status results ingestion, the last M4 task. PHPCS and PHPStan pass;
+  the full suite passes with 36 tests and 155 assertions. The four deprecations
+  remain upstream Key 1.22 notices.
 
 - 2026-11-05, Codex — Completed the M4 deterministic analyzer on
   `feat/m4-release-data`. Agent module entries now identify core, contributed,
