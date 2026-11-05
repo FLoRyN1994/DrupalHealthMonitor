@@ -25,7 +25,7 @@ Update this file at the end of every session (see AGENTS.md).
   (`app-production-9474.up.railway.app`, HTTP 200)
 - [x] Custom domain health-monitor.tofdev.com (CNAME + TXT), HTTPS verified
   (certificate valid, DNS propagated)
-- [ ] Cron service (deferred to M3+, once there's a queue worth running)
+- [x] Railway `cron` service (same image, `drush cron` every five minutes)
 - [x] CI workflow triggers on `push` to `main` and on pull requests
 
 ## M2 — Data model
@@ -59,6 +59,17 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-05, Codex — Completed the deferred M1b production cron task on
+  `feat/m1b-railway-cron`. Added the Railway `cron` service from the same GitHub
+  `main` source/image, with `drush cron`, schedule `*/5 * * * *`, no public
+  networking, no volume, and DB/Drupal variables expressed as references to the
+  existing MySQL/app variables (no secret values were copied). Deployment
+  `4d863894-f5e5-43d6-9baa-82a2b5ab9cc6` built successfully; the first scheduled
+  execution started at 14:05:48 UTC and exited normally at 14:05:52 UTC. Production
+  GitHub `main` is still at the M1-era code, so this currently proves Drupal cron
+  execution and will begin M3 snapshot collection after the feature work is merged
+  and deployed. Next: M4's cached drupal.org release-data client.
 
 - 2026-11-03, Codex — Completed M3 on `feat/m3-agent-endpoint`. Added cron
   scheduling for active Sites, an attributed Queue Worker, signed Guzzle
