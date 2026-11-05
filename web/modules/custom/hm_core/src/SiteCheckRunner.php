@@ -7,6 +7,7 @@ namespace Drupal\hm_core;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\hm_core\Analysis\HealthScoreUpdater;
 use Drupal\hm_core\Analysis\SnapshotAnalyzer;
 use Drupal\hm_core\Entity\Site;
 use Drupal\hm_core\Entity\Snapshot;
@@ -35,6 +36,7 @@ final class SiteCheckRunner {
     private readonly TimeInterface $time,
     private readonly LoggerInterface $logger,
     private readonly SnapshotAnalyzer $snapshotAnalyzer,
+    private readonly HealthScoreUpdater $healthScoreUpdater,
   ) {
   }
 
@@ -86,6 +88,7 @@ final class SiteCheckRunner {
         FALSE,
         $exception->getMessage(),
       );
+      $this->healthScoreUpdater->update($siteId);
       $this->logger->warning('Could not check @site: @message', [
         '@site' => $site->label(),
         '@message' => $exception->getMessage(),
@@ -97,6 +100,7 @@ final class SiteCheckRunner {
     $response_time = $this->elapsedMilliseconds($started_at);
     $raw_payload = (string) $response->getBody();
     $error = NULL;
+    $snapshot = NULL;
 
     if ($http_status >= 200 && $http_status < 300) {
       try {
@@ -105,7 +109,6 @@ final class SiteCheckRunner {
           throw new \UnexpectedValueException('The agent returned an invalid status payload.');
         }
         $snapshot = $this->saveSnapshot($siteId, $timestamp, $payload, $raw_payload);
-        $this->snapshotAnalyzer->analyze($snapshot);
       }
       catch (\JsonException | \UnexpectedValueException $exception) {
         $error = $exception->getMessage();
@@ -131,6 +134,10 @@ final class SiteCheckRunner {
       $http_status >= 200 && $http_status < 300,
       $error,
     );
+    if ($snapshot instanceof Snapshot) {
+      $this->snapshotAnalyzer->analyze($snapshot);
+    }
+    $this->healthScoreUpdater->update($siteId);
   }
 
   /**

@@ -6,6 +6,8 @@ namespace Drupal\Tests\hm_core\Kernel;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\hm_core\Analysis\FindingReconciler;
+use Drupal\hm_core\Analysis\HealthScoreCalculator;
+use Drupal\hm_core\Analysis\HealthScoreUpdater;
 use Drupal\hm_core\Analysis\ProjectAnalyzer;
 use Drupal\hm_core\Analysis\SnapshotAnalyzer;
 use Drupal\hm_core\Entity\Client as HmClient;
@@ -111,6 +113,11 @@ final class CollectionTest extends KernelTestBase {
       new FindingReconciler($this->container->get('entity_type.manager')),
       new NullLogger(),
     );
+    $health_score_updater = new HealthScoreUpdater(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('database'),
+      new HealthScoreCalculator(),
+    );
     $runner = new SiteCheckRunner(
       $http_client,
       $this->container->get('entity_type.manager'),
@@ -118,6 +125,7 @@ final class CollectionTest extends KernelTestBase {
       $time,
       new NullLogger(),
       $snapshot_analyzer,
+      $health_score_updater,
     );
     $runner->check((int) $site->id());
 

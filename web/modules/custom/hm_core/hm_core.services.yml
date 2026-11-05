@@ -13,6 +13,10 @@ services:
 
   Drupal\hm_core\Analysis\FindingReconciler: ~
 
+  Drupal\hm_core\Analysis\HealthScoreCalculator: ~
+
+  Drupal\hm_core\Analysis\HealthScoreUpdater: ~
+
   Drupal\hm_core\SiteCheckRunner:
     arguments:
       $logger: '@logger.channel.hm_core'
