@@ -57,13 +57,19 @@ This runs `drush deploy` on every deploy after the first, and installs the site 
   Fix each domain's **Target Port** to `8080` (Settings → Networking, or
   `railway domain update <domain> --port 8080 --service app`).
 
-## 7. Cron service (add once drush cron work exists — M3+)
-**+ New** → **Empty Service**, same GitHub repo, same Dockerfile.
-- **Settings → Deploy → Start Command:** `drush cron`
-- Copy the same `DB_*` and `DRUPAL_*` variables as the app service (or use a shared
-  variable group: project **Settings → Shared Variables**).
-- **Settings → Cron Schedule:** `*/5 * * * *`
-- No public networking and no volume needed on this service.
+## 7. Cron service
+The production `cron` service is configured from the same GitHub `main` source and
+Dockerfile as `app`:
+- **Start Command:** `drush cron`
+- **Cron Schedule:** `*/5 * * * *`
+- `DB_*` variables reference `${{MySQL.*}}`; `DRUPAL_*` variables reference the
+  matching `${{app.*}}` values, so no secrets are duplicated.
+- No public networking and no volume.
+
+Railway builds the image once and creates a short-lived execution at each schedule
+boundary. Verify individual runs through Railway logs or the deployment-instance
+execution history; a successful run reaches `EXITED`, while a failed process is
+reported as `CRASHED`.
 
 ## 8. Enable Wait for CI
 **app** service → **Settings → Deploy**, toggle **Wait for CI**. It only appears once
@@ -71,11 +77,11 @@ This runs `drush deploy` on every deploy after the first, and installs the site 
 Now Railway deploys `main` only after CI (PHPCS, PHPStan, PHPUnit, Docker build) passes.
 
 ## First deploy checklist
-- [ ] app service builds successfully from the Dockerfile
-- [ ] MySQL service added, variables wired with `${{MySQL.*}}` references
-- [ ] Volume mounted on `web/sites/default/files`
-- [ ] Pre-deploy command set
-- [ ] Site loads on the `*.up.railway.app` domain
-- [ ] Custom domain verified, HTTPS working on health-monitor.tofdev.com
-- [ ] Wait for CI enabled
-- [ ] Cron service added (once there's a cron job worth running)
+- [x] app service builds successfully from the Dockerfile
+- [x] MySQL service added, variables wired with `${{MySQL.*}}` references
+- [x] Volume mounted on `web/sites/default/files`
+- [x] Pre-deploy command set
+- [x] Site loads on the `*.up.railway.app` domain
+- [x] Custom domain verified, HTTPS working on health-monitor.tofdev.com
+- [x] Wait for CI enabled
+- [x] Cron service added and first scheduled execution verified
