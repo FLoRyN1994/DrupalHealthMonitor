@@ -20,6 +20,7 @@ final class SnapshotAnalyzer {
     private readonly ReleaseDataClientInterface $releaseDataClient,
     private readonly ProjectAnalyzer $projectAnalyzer,
     private readonly FindingReconciler $findingReconciler,
+    private readonly UpgradeStatusAnalyzer $upgradeStatusAnalyzer,
     private readonly LoggerInterface $logger,
   ) {
   }
@@ -95,6 +96,7 @@ final class SnapshotAnalyzer {
         array_keys($projects),
       );
     }
+    $this->upgradeStatusAnalyzer->analyze($snapshot);
   }
 
 }

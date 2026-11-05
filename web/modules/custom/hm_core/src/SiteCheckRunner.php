@@ -154,7 +154,64 @@ final class SiteCheckRunner {
       && $payload['php_version'] !== ''
       && is_array($payload['modules'] ?? NULL)
       && is_int($payload['pending_updates'] ?? NULL)
-      && $payload['pending_updates'] >= 0;
+      && $payload['pending_updates'] >= 0
+      && (!isset($payload['upgrade_status'])
+        || $this->isValidUpgradeStatus($payload['upgrade_status']));
+  }
+
+  /**
+   * Validates the optional, bounded Upgrade Status payload section.
+   */
+  private function isValidUpgradeStatus(mixed $upgradeStatus): bool {
+    if (!is_array($upgradeStatus)
+      || ($upgradeStatus['schema_version'] ?? NULL) !== 1
+      || !in_array($upgradeStatus['status'] ?? NULL, [
+        'not_installed',
+        'never_scanned',
+        'available',
+        'stale',
+        'failed',
+      ], TRUE)
+      || !is_int($upgradeStatus['target_major'] ?? NULL)
+      || $upgradeStatus['target_major'] < 11
+      || $upgradeStatus['target_major'] > 20
+      || !is_int($upgradeStatus['collected_at'] ?? NULL)
+      || !is_array($upgradeStatus['projects'] ?? NULL)
+      || count($upgradeStatus['projects']) > 250
+    ) {
+      return FALSE;
+    }
+
+    foreach ($upgradeStatus['projects'] as $project) {
+      if (!is_array($project)
+        || !is_string($project['project'] ?? NULL)
+        || preg_match('/^[a-z0-9_]{1,128}$/', $project['project']) !== 1
+        || !is_int($project['scanned_at'] ?? NULL)
+        || !is_bool($project['stale'] ?? NULL)
+        || !$this->isValidIssueCount($project['errors'] ?? NULL)
+        || !$this->isValidIssueCount($project['warnings'] ?? NULL)
+        || !$this->isValidIssueCount($project['total_issues'] ?? NULL)
+        || !in_array($project['next_action'] ?? NULL, [
+          'relax',
+          'remove',
+          'update',
+          'collaborate',
+          'scan',
+          'rector',
+          'manual',
+        ], TRUE)
+      ) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  /**
+   * Returns whether a normalized issue count is valid.
+   */
+  private function isValidIssueCount(mixed $count): bool {
+    return is_int($count) && $count >= 0 && $count <= 100_000;
   }
 
   /**

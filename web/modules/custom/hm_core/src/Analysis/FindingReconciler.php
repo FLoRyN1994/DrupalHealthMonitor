@@ -29,17 +29,21 @@ final class FindingReconciler {
    *   Drupal.org project machine name.
    * @param array<string, \Drupal\hm_core\Analysis\FindingCandidate> $candidates
    *   Current candidates keyed by finding type.
+   * @param string $source
+   *   Evidence source machine name.
    */
   public function reconcile(
     int $siteId,
     string $projectName,
     array $candidates,
+    string $source = 'release_data',
   ): void {
     $storage = $this->entityTypeManager->getStorage('hm_finding');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('site', $siteId)
       ->condition('project_name', $projectName)
+      ->condition('source', $source)
       ->execute();
     $existing_by_type = [];
     foreach ($storage->loadMultiple($ids) as $entity) {
@@ -62,6 +66,7 @@ final class FindingReconciler {
           'site' => $siteId,
           'project_name' => $projectName,
           'type' => $candidate->type,
+          'source' => $source,
         ]);
         if (!$finding instanceof Finding) {
           throw new \UnexpectedValueException('Finding storage returned an invalid entity.');
@@ -92,7 +97,8 @@ final class FindingReconciler {
     $query = $storage->getQuery()
       ->accessCheck(FALSE)
       ->condition('site', $siteId)
-      ->condition('resolved', FALSE);
+      ->condition('resolved', FALSE)
+      ->condition('source', 'release_data');
     if ($installedProjects !== []) {
       $query->condition('project_name', $installedProjects, 'NOT IN');
     }

@@ -7,6 +7,8 @@ services:
 
   Drupal\hm_agent\SignatureValidator: ~
 
+  Drupal\hm_agent\UpgradeStatusCollector: ~
+
   Drupal\hm_agent\StatusCollector:
     arguments:
       $postUpdateRegistry: '@update.post_update_registry'
