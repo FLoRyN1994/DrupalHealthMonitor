@@ -42,7 +42,7 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## M4 — Analysis
 - [x] drupal.org release data client (cached)
-- [ ] Analyzer: security / update / unsupported / D12 blocker findings
+- [x] Analyzer: security / update / unsupported / D12 blocker findings
 - [ ] Health score + unit tests
 - [ ] Upgrade Status results ingestion
 
@@ -59,6 +59,23 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-05, Codex — Completed the M4 deterministic analyzer on
+  `feat/m4-release-data`. Agent module entries now identify core, contributed,
+  and custom origin and map contributed submodules to their drupal.org project.
+  Every persisted Snapshot triggers analysis of core and identifiable contrib
+  projects. Stable published releases are evaluated for security updates,
+  regular same-major updates, unsupported project/branch/security coverage,
+  and Drupal 12 compatibility. Findings are upserted by Site + project + type;
+  disappeared findings and removed projects are resolved only with complete
+  successful evidence, while release-feed failures preserve existing alerts.
+  Missing compatibility metadata remains unknown instead of becoming a false
+  D12 blocker. Unit and kernel coverage exercises all finding types, legacy
+  versions, prerelease exclusion, core releases, and reconciliation lifecycle.
+  Live checks verified agent provenance and produced no false finding for the
+  installed Drupal core. PHPCS and PHPStan pass; the full PHPUnit suite passes
+  with 25 tests and 141 assertions. The four deprecations remain upstream Key
+  1.22 notices. Next: health score calculation and tests.
 
 - 2026-11-05, Codex — Completed the first M4 task on `feat/m4-release-data`.
   Added an autowired drupal.org release-history client with typed project/release

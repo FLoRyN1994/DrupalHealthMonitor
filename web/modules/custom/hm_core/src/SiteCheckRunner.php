@@ -7,7 +7,9 @@ namespace Drupal\hm_core;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\hm_core\Analysis\SnapshotAnalyzer;
 use Drupal\hm_core\Entity\Site;
+use Drupal\hm_core\Entity\Snapshot;
 use Drupal\key\KeyInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -32,6 +34,7 @@ final class SiteCheckRunner {
     private readonly Connection $database,
     private readonly TimeInterface $time,
     private readonly LoggerInterface $logger,
+    private readonly SnapshotAnalyzer $snapshotAnalyzer,
   ) {
   }
 
@@ -101,7 +104,8 @@ final class SiteCheckRunner {
         if (!is_array($payload) || !$this->isValidPayload($payload)) {
           throw new \UnexpectedValueException('The agent returned an invalid status payload.');
         }
-        $this->saveSnapshot($siteId, $timestamp, $payload, $raw_payload);
+        $snapshot = $this->saveSnapshot($siteId, $timestamp, $payload, $raw_payload);
+        $this->snapshotAnalyzer->analyze($snapshot);
       }
       catch (\JsonException | \UnexpectedValueException $exception) {
         $error = $exception->getMessage();
@@ -163,7 +167,7 @@ final class SiteCheckRunner {
     int $checkedAt,
     array $payload,
     string $rawPayload,
-  ): void {
+  ): Snapshot {
     $snapshot = $this->entityTypeManager->getStorage('hm_snapshot')->create([
       'site' => $siteId,
       'checked_at' => $checkedAt,
@@ -173,7 +177,11 @@ final class SiteCheckRunner {
       'pending_updates' => $payload['pending_updates'],
       'raw_payload' => $rawPayload,
     ]);
+    if (!$snapshot instanceof Snapshot) {
+      throw new \UnexpectedValueException('Snapshot storage returned an invalid entity.');
+    }
     $snapshot->save();
+    return $snapshot;
   }
 
   /**
