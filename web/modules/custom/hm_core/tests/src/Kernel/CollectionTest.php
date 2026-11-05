@@ -10,6 +10,7 @@ use Drupal\hm_core\Analysis\HealthScoreCalculator;
 use Drupal\hm_core\Analysis\HealthScoreUpdater;
 use Drupal\hm_core\Analysis\ProjectAnalyzer;
 use Drupal\hm_core\Analysis\SnapshotAnalyzer;
+use Drupal\hm_core\Analysis\UpgradeStatusAnalyzer;
 use Drupal\hm_core\Entity\Client as HmClient;
 use Drupal\hm_core\Entity\Site;
 use Drupal\hm_core\Entity\Snapshot;
@@ -107,10 +108,17 @@ final class CollectionTest extends KernelTestBase {
     $release_client->method('getProject')->willReturn(
       ReleaseDataResult::unavailable('test', 'Not available in test.', self::TIMESTAMP),
     );
+    $finding_reconciler = new FindingReconciler(
+      $this->container->get('entity_type.manager'),
+    );
     $snapshot_analyzer = new SnapshotAnalyzer(
       $release_client,
       new ProjectAnalyzer(),
-      new FindingReconciler($this->container->get('entity_type.manager')),
+      $finding_reconciler,
+      new UpgradeStatusAnalyzer(
+        $this->container->get('entity_type.manager'),
+        $finding_reconciler,
+      ),
       new NullLogger(),
     );
     $health_score_updater = new HealthScoreUpdater(

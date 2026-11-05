@@ -17,6 +17,8 @@ services:
 
   Drupal\hm_core\Analysis\HealthScoreUpdater: ~
 
+  Drupal\hm_core\Analysis\UpgradeStatusAnalyzer: ~
+
   Drupal\hm_core\SiteCheckRunner:
     arguments:
       $logger: '@logger.channel.hm_core'

@@ -44,7 +44,7 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] drupal.org release data client (cached)
 - [x] Analyzer: security / update / unsupported / D12 blocker findings
 - [x] Health score + unit tests
-- [ ] Upgrade Status results ingestion
+- [x] Upgrade Status results ingestion
 
 ## M5 — Dashboard UI
 - [ ] `hm_theme` from starterkit
@@ -59,6 +59,27 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-05, Codex — Completed Upgrade Status ingestion and therefore M4 on
+  `feat/m4-release-data`. The core-only agent optionally reads Upgrade Status's
+  saved key/value results and emits a versioned, maximum-250-project summary
+  with explicit not-installed, never-scanned, available, stale, and failed
+  states. Results older than 30 days are stale; malformed results and scan
+  transport failures are not treated as clean scans. The monitor validates the
+  bounded payload and only reconciles fresh scans targeting Drupal 12. Current
+  scan errors create a high-severity D12 blocker; a fresh clean scan resolves
+  only that project's scan-backed blocker. Missing, stale, failed, or D11-target
+  evidence preserves prior findings. Finding now records `release_data` versus
+  `upgrade_status` evidence so the two lifecycles cannot clear each other; an
+  open release-data blocker suppresses a duplicate scan blocker. Added a
+  post-update storage migration, including a repair update discovered by an
+  end-to-end cron run, and verified both demo agents return HTTP 200 afterward.
+  PHPCS and PHPStan pass; the full suite passes with 42 tests and 195 assertions.
+  The four deprecations remain upstream Key 1.22 notices. M4 is complete; next
+  blueprint task is M5's `hm_theme` starterkit. Local Beacon Staging currently
+  scores 92 because the 12-check window correctly retains two HTTP 500 checks
+  produced while testing its stale multisite container; successful checks will
+  age them out.
 
 - 2026-11-05, Codex — Completed the M4 health score on
   `feat/m4-release-data`. A pure calculator starts at 100 and applies capped,
