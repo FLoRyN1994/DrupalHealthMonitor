@@ -12,3 +12,11 @@ services:
   Drupal\hm_core\SiteCheckRunner:
     arguments:
       $logger: '@logger.channel.hm_core'
+
+  Drupal\hm_core\Release\DrupalOrgReleaseDataClient:
+    arguments:
+      $cache: '@cache.default'
+      $logger: '@logger.channel.hm_core'
+
+  Drupal\hm_core\Release\ReleaseDataClientInterface:
+    alias: Drupal\hm_core\Release\DrupalOrgReleaseDataClient

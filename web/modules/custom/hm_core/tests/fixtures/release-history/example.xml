@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+  <title>Example module</title>
+  <short_name>example</short_name>
+  <type>project_module</type>
+  <supported_branches>2.0., 3.0.</supported_branches>
+  <project_status>published</project_status>
+  <releases>
+    <release>
+      <version>3.0.1</version>
+      <status>published</status>
+      <release_link>https://www.drupal.org/project/example/releases/3.0.1</release_link>
+      <date>1793355985</date>
+      <terms>
+        <term><name>Release type</name><value>Security update</value></term>
+        <term><name>Release type</name><value>Bug fixes</value></term>
+      </terms>
+      <security covered="1">Covered by Drupal's security advisory policy</security>
+      <core_compatibility>^11 || ^12</core_compatibility>
+    </release>
+    <release>
+      <version>2.0.0</version>
+      <status>published</status>
+      <release_link>https://www.drupal.org/project/example/releases/2.0.0</release_link>
+      <date>not-a-timestamp</date>
+      <terms>
+        <term><name>Release type</name><value>Insecure</value></term>
+      </terms>
+      <security>Not covered</security>
+      <core_compatibility>^10</core_compatibility>
+    </release>
+  </releases>
+</project>
