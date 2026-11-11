@@ -1,0 +1,51 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+
+name: Findings table
+status: stable
+description: Displays open findings across monitored sites.
+props:
+  type: object
+  required:
+    - caption
+    - findings
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+    caption:
+      type: string
+      title: Table caption
+    findings:
+      type: array
+      title: Findings
+      items:
+        type: object
+        required:
+          - site_name
+          - site_url
+          - project_name
+          - type
+          - severity
+          - current_version
+          - recommended_version
+        properties:
+          site_name:
+            type: string
+          site_url:
+            type: string
+          project_name:
+            type: string
+          type:
+            type: string
+          severity:
+            type: string
+            enum:
+              - critical
+              - high
+              - medium
+              - low
+              - info
+          current_version:
+            type: string
+          recommended_version:
+            type: string

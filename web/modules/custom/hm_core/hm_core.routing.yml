@@ -1,0 +1,9 @@
+hm_core.dashboard:
+  path: '/admin/health-monitor/dashboard'
+  defaults:
+    _controller: '\Drupal\hm_core\Controller\DashboardController::build'
+    _title: 'Health Monitor dashboard'
+  requirements:
+    _permission: 'administer health monitor'
+  options:
+    _admin_route: true
