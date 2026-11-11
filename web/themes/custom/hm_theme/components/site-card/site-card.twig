@@ -1,0 +1,16 @@
+<article{{ attributes.addClass('site-card') }}>
+  <div class="site-card__header">
+    <div>
+      <p class="site-card__eyebrow">{{ environment }} · {{ status }}</p>
+      <h2 class="site-card__title"><a href="{{ detail_url }}">{{ name }}</a></h2>
+    </div>
+    {{ include('hm_theme:health-badge', { score: health_score }, with_context = false) }}
+  </div>
+  <a class="site-card__url" href="{{ base_url }}" target="_blank" rel="noopener noreferrer">{{ base_url }}</a>
+  <div class="site-card__footer">
+    <span class="site-card__finding-count">
+      {{ open_findings }} open {{ open_findings == 1 ? 'finding' : 'findings' }}
+    </span>
+    <a class="site-card__details" href="{{ detail_url }}">View site details<span class="visually-hidden"> for {{ name }}</span></a>
+  </div>
+</article>

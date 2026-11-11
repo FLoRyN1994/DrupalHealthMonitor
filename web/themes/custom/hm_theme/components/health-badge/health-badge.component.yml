@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+
+name: Health badge
+status: stable
+description: Displays a site health score with an accessible status label.
+props:
+  type: object
+  required:
+    - score
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+    score:
+      type: integer
+      title: Health score
+      minimum: 0
+      maximum: 100
+    label:
+      type: string
+      title: Accessible label
+      default: Health score

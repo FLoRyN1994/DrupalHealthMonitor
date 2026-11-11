@@ -12,6 +12,8 @@ base:
         weight: -10
       css/components/details.css:
         weight: -10
+      css/components/dashboard.css:
+        weight: -10
       css/components/exposed-filters.css:
         weight: -10
       css/components/field.css:
