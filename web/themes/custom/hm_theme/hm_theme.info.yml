@@ -1,0 +1,25 @@
+name: 'Health Monitor'
+type: theme
+'base theme': false
+libraries:
+  - hm_theme/base
+  - hm_theme/messages
+  - core/normalize
+libraries-extend:
+  user/drupal.user:
+    - hm_theme/user
+  core/drupal.dropbutton:
+    - hm_theme/dropbutton
+  core/drupal.dialog:
+    - hm_theme/dialog
+  file/drupal.file:
+    - hm_theme/file
+  core/drupal.item-list:
+    - hm_theme/item-list
+  core/drupal.progress:
+    - hm_theme/progress
+  core/drupal.tablesort:
+    - hm_theme/drupal.tablesort
+description: 'Dashboard theme for Drupal Health Monitor.'
+core_version_requirement: ^11
+generator: 'starterkit_theme:11.4.11'

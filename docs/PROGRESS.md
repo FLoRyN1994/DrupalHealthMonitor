@@ -47,7 +47,7 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Upgrade Status results ingestion
 
 ## M5 — Dashboard UI
-- [ ] `hm_theme` from starterkit
+- [x] `hm_theme` from starterkit
 - [ ] SDC: site card, health badge, findings table
 - [ ] HTMX refresh and filters
 
@@ -59,6 +59,18 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-11, Codex — Completed the M5 starterkit task on
+  `feat/m5-dashboard-ui`. Generated `hm_theme` from Drupal 11.4.11's
+  Starterkit, retained its attributed OOP preprocess hook with strict typing,
+  enabled it as the default theme, and exported matching block placements for
+  branding, messages, page title, local actions/tasks, and sidebar menus. A
+  live anonymous request returns HTTP 200 and loads the new theme's assets.
+  PHPCS and PHPStan pass; the full suite passes with 42 tests and 195
+  assertions. The four deprecations remain upstream Key 1.22 notices. Local
+  PHPUnit needs `SIMPLETEST_DB=mysql://db:db@db/db` supplied explicitly for
+  kernel tests. Next: build the site card, health badge, and findings table as
+  Single Directory Components.
 
 - 2026-11-05, Codex — Completed Upgrade Status ingestion and therefore M4 on
   `feat/m4-release-data`. The core-only agent optionally reads Upgrade Status's
