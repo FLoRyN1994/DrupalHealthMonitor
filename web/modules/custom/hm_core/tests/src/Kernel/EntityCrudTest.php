@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\hm_core\Kernel;
 
+use Drupal\hm_core\Entity\AiReport;
 use Drupal\hm_core\Entity\Client;
 use Drupal\hm_core\Entity\Finding;
 use Drupal\hm_core\Entity\Site;
@@ -23,12 +24,16 @@ final class EntityCrudTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
+    'file',
     'filter',
     'key',
     'options',
     'system',
+    'text',
     'user',
     'views',
+    'ai',
+    'ai_provider_anthropic',
     'hm_core',
   ];
 
@@ -42,10 +47,11 @@ final class EntityCrudTest extends KernelTestBase {
     $this->installEntitySchema('hm_site');
     $this->installEntitySchema('hm_snapshot');
     $this->installEntitySchema('hm_finding');
+    $this->installEntitySchema('hm_ai_report');
   }
 
   /**
-   * Tests creating, reading, updating, and deleting all four entity types.
+   * Tests creating, reading, updating, and deleting all entity types.
    */
   public function testEntityCrud(): void {
     $client = Client::create([
@@ -90,11 +96,25 @@ final class EntityCrudTest extends KernelTestBase {
     $finding->save();
     self::assertFalse((bool) $finding->get('resolved')->value);
 
+    $report = AiReport::create([
+      'title' => 'Example maintenance report',
+      'site' => $site->id(),
+      'generated_at' => 1_798_000_000,
+      'summary_text' => ['value' => 'Summary', 'format' => 'plain_text'],
+      'release_digest' => ['value' => 'Updates', 'format' => 'plain_text'],
+      'd12_advice' => ['value' => 'Advice', 'format' => 'plain_text'],
+      'effort_estimate' => '2.50',
+      'model_used' => 'test:model',
+    ]);
+    $report->save();
+    self::assertSame('2.50', AiReport::load($report->id())?->get('effort_estimate')->value);
+
     $site->set('health_score', 42)->save();
     $finding->set('resolved', TRUE)->save();
     self::assertSame(42, (int) Site::load($site->id())?->get('health_score')->value);
     self::assertTrue((bool) Finding::load($finding->id())?->get('resolved')->value);
 
+    $report->delete();
     $finding->delete();
     $snapshot->delete();
     $site->delete();
@@ -103,6 +123,7 @@ final class EntityCrudTest extends KernelTestBase {
     self::assertNull(Site::load($site->id()));
     self::assertNull(Snapshot::load($snapshot->id()));
     self::assertNull(Finding::load($finding->id()));
+    self::assertNull(AiReport::load($report->id()));
   }
 
 }

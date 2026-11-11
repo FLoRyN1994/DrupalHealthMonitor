@@ -28,3 +28,9 @@ hm_core.findings:
   description: 'Review analyzed site findings.'
   route_name: entity.hm_finding.collection
   parent: system.admin_content
+
+hm_core.ai_reports:
+  title: 'Health Monitor AI reports'
+  description: 'Review generated client maintenance reports.'
+  route_name: entity.hm_ai_report.collection
+  parent: system.admin_content

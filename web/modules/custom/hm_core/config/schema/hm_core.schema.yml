@@ -1,0 +1,10 @@
+hm_core.ai:
+  type: config_object
+  label: 'Health Monitor AI settings'
+  mapping:
+    provider_id:
+      type: string
+      label: 'AI provider plugin ID'
+    model_id:
+      type: string
+      label: 'AI model ID'
