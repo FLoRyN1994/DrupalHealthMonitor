@@ -7,7 +7,10 @@ namespace Drupal\hm_core;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\hm_core\Analysis\HealthScoreUpdater;
+use Drupal\hm_core\Analysis\SnapshotAnalyzer;
 use Drupal\hm_core\Entity\Site;
+use Drupal\hm_core\Entity\Snapshot;
 use Drupal\key\KeyInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -32,6 +35,8 @@ final class SiteCheckRunner {
     private readonly Connection $database,
     private readonly TimeInterface $time,
     private readonly LoggerInterface $logger,
+    private readonly SnapshotAnalyzer $snapshotAnalyzer,
+    private readonly HealthScoreUpdater $healthScoreUpdater,
   ) {
   }
 
@@ -83,6 +88,7 @@ final class SiteCheckRunner {
         FALSE,
         $exception->getMessage(),
       );
+      $this->healthScoreUpdater->update($siteId);
       $this->logger->warning('Could not check @site: @message', [
         '@site' => $site->label(),
         '@message' => $exception->getMessage(),
@@ -94,6 +100,7 @@ final class SiteCheckRunner {
     $response_time = $this->elapsedMilliseconds($started_at);
     $raw_payload = (string) $response->getBody();
     $error = NULL;
+    $snapshot = NULL;
 
     if ($http_status >= 200 && $http_status < 300) {
       try {
@@ -101,7 +108,7 @@ final class SiteCheckRunner {
         if (!is_array($payload) || !$this->isValidPayload($payload)) {
           throw new \UnexpectedValueException('The agent returned an invalid status payload.');
         }
-        $this->saveSnapshot($siteId, $timestamp, $payload, $raw_payload);
+        $snapshot = $this->saveSnapshot($siteId, $timestamp, $payload, $raw_payload);
       }
       catch (\JsonException | \UnexpectedValueException $exception) {
         $error = $exception->getMessage();
@@ -127,6 +134,10 @@ final class SiteCheckRunner {
       $http_status >= 200 && $http_status < 300,
       $error,
     );
+    if ($snapshot instanceof Snapshot) {
+      $this->snapshotAnalyzer->analyze($snapshot);
+    }
+    $this->healthScoreUpdater->update($siteId);
   }
 
   /**
@@ -143,7 +154,64 @@ final class SiteCheckRunner {
       && $payload['php_version'] !== ''
       && is_array($payload['modules'] ?? NULL)
       && is_int($payload['pending_updates'] ?? NULL)
-      && $payload['pending_updates'] >= 0;
+      && $payload['pending_updates'] >= 0
+      && (!isset($payload['upgrade_status'])
+        || $this->isValidUpgradeStatus($payload['upgrade_status']));
+  }
+
+  /**
+   * Validates the optional, bounded Upgrade Status payload section.
+   */
+  private function isValidUpgradeStatus(mixed $upgradeStatus): bool {
+    if (!is_array($upgradeStatus)
+      || ($upgradeStatus['schema_version'] ?? NULL) !== 1
+      || !in_array($upgradeStatus['status'] ?? NULL, [
+        'not_installed',
+        'never_scanned',
+        'available',
+        'stale',
+        'failed',
+      ], TRUE)
+      || !is_int($upgradeStatus['target_major'] ?? NULL)
+      || $upgradeStatus['target_major'] < 11
+      || $upgradeStatus['target_major'] > 20
+      || !is_int($upgradeStatus['collected_at'] ?? NULL)
+      || !is_array($upgradeStatus['projects'] ?? NULL)
+      || count($upgradeStatus['projects']) > 250
+    ) {
+      return FALSE;
+    }
+
+    foreach ($upgradeStatus['projects'] as $project) {
+      if (!is_array($project)
+        || !is_string($project['project'] ?? NULL)
+        || preg_match('/^[a-z0-9_]{1,128}$/', $project['project']) !== 1
+        || !is_int($project['scanned_at'] ?? NULL)
+        || !is_bool($project['stale'] ?? NULL)
+        || !$this->isValidIssueCount($project['errors'] ?? NULL)
+        || !$this->isValidIssueCount($project['warnings'] ?? NULL)
+        || !$this->isValidIssueCount($project['total_issues'] ?? NULL)
+        || !in_array($project['next_action'] ?? NULL, [
+          'relax',
+          'remove',
+          'update',
+          'collaborate',
+          'scan',
+          'rector',
+          'manual',
+        ], TRUE)
+      ) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  /**
+   * Returns whether a normalized issue count is valid.
+   */
+  private function isValidIssueCount(mixed $count): bool {
+    return is_int($count) && $count >= 0 && $count <= 100_000;
   }
 
   /**
@@ -163,7 +231,7 @@ final class SiteCheckRunner {
     int $checkedAt,
     array $payload,
     string $rawPayload,
-  ): void {
+  ): Snapshot {
     $snapshot = $this->entityTypeManager->getStorage('hm_snapshot')->create([
       'site' => $siteId,
       'checked_at' => $checkedAt,
@@ -173,7 +241,11 @@ final class SiteCheckRunner {
       'pending_updates' => $payload['pending_updates'],
       'raw_payload' => $rawPayload,
     ]);
+    if (!$snapshot instanceof Snapshot) {
+      throw new \UnexpectedValueException('Snapshot storage returned an invalid entity.');
+    }
     $snapshot->save();
+    return $snapshot;
   }
 
   /**

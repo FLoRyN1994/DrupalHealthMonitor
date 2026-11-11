@@ -20,6 +20,7 @@ class StatusCollector {
     private readonly ModuleHandlerInterface $moduleHandler,
     private readonly UpdateRegistry $postUpdateRegistry,
     private readonly TimeInterface $time,
+    private readonly UpgradeStatusCollector $upgradeStatusCollector,
   ) {
   }
 
@@ -32,9 +33,14 @@ class StatusCollector {
   public function collect(): array {
     $modules = [];
     foreach ($this->moduleHandler->getModuleList() as $machine_name => $extension) {
+      $project = $extension->info['project'] ?? NULL;
+      $project_name = is_string($project) && $project !== '' ? $project : NULL;
+      $is_core = str_starts_with($extension->getPath(), 'core/');
       $modules[$machine_name] = [
         'name' => (string) ($extension->info['name'] ?? $machine_name),
         'version' => (string) ($extension->info['version'] ?? ''),
+        'project' => $project_name,
+        'origin' => $is_core ? 'core' : ($project_name !== NULL ? 'contrib' : 'custom'),
       ];
     }
     ksort($modules);
@@ -46,6 +52,7 @@ class StatusCollector {
       'php_version' => PHP_VERSION,
       'modules' => $modules,
       'pending_updates' => $this->countPendingUpdates(),
+      'upgrade_status' => $this->upgradeStatusCollector->collect(),
     ];
   }
 

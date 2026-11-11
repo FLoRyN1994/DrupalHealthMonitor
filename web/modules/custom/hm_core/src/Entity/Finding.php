@@ -101,6 +101,18 @@ final class Finding extends HealthMonitorEntityBase {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
+    $fields['source'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(new TranslatableMarkup('Evidence source'))
+      ->setRequired(TRUE)
+      ->setSetting('allowed_values', [
+        'release_data' => 'Drupal.org release data',
+        'upgrade_status' => 'Upgrade Status scan',
+      ])
+      ->setDefaultValue('release_data')
+      ->setDisplayOptions('form', ['type' => 'options_select', 'weight' => 35])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
     $fields['current_version'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Current version'))
       ->setSetting('max_length', 100)
