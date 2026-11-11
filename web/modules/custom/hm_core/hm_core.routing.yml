@@ -7,3 +7,16 @@ hm_core.dashboard:
     _permission: 'administer health monitor'
   options:
     _admin_route: true
+
+hm_core.ai_report.generate:
+  path: '/admin/health-monitor/sites/{hm_site}/reports/generate'
+  defaults:
+    _form: '\Drupal\hm_core\Form\GenerateReportForm'
+    _title: 'Generate client report'
+  requirements:
+    _permission: 'administer health monitor'
+  options:
+    _admin_route: true
+    parameters:
+      hm_site:
+        type: entity:hm_site
