@@ -1,0 +1,44 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+
+name: Site card
+status: stable
+description: Summarizes one monitored Drupal site on the fleet dashboard.
+props:
+  type: object
+  required:
+    - name
+    - base_url
+    - environment
+    - status
+    - health_score
+    - open_findings
+    - detail_url
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+    name:
+      type: string
+      title: Site name
+    base_url:
+      type: string
+      format: uri
+      title: Site URL
+    environment:
+      type: string
+      title: Environment label
+    status:
+      type: string
+      title: Monitoring status
+    health_score:
+      type: integer
+      title: Health score
+      minimum: 0
+      maximum: 100
+    open_findings:
+      type: integer
+      title: Open finding count
+      minimum: 0
+    detail_url:
+      type: string
+      title: Site detail URL

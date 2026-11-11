@@ -48,8 +48,8 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## M5 — Dashboard UI
 - [x] `hm_theme` from starterkit
-- [ ] SDC: site card, health badge, findings table
-- [ ] HTMX refresh and filters
+- [x] SDC: site card, health badge, findings table
+- [x] HTMX refresh and filters
 
 ## M6 — AI and MCP
 - [ ] AI module + Anthropic provider; client report, release digest, D12 advice
@@ -59,6 +59,35 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-11, Codex — Completed HTMX refresh/filtering and therefore M5 on
+  `feat/m5-dashboard-components`. The dashboard now filters by environment,
+  monitoring status, and health band through ordinary GET requests with a
+  no-JavaScript submit/reset path. Drupal core's HTMX API progressively
+  enhances changes and submits, requests the minimal main-content renderer,
+  selects and replaces only `#hm-dashboard-results`, updates browser history,
+  cancels superseded requests, loads core's asset integration, and exposes a
+  status indicator. Filter query args are allowlisted and included in render
+  cache contexts; Findings are scoped to the selected Sites. Full and HTMX
+  requests return HTTP 200 locally, and the controller kernel test covers
+  combined filters, component props, and generated HTMX attributes. PHPCS and
+  PHPStan pass; the full suite passes with 44 tests and 217 assertions. The
+  four deprecations remain upstream Key 1.22 notices. M5 is complete; next:
+  M6's AI module/provider integration and deterministic report context.
+
+- 2026-11-11, Codex — Completed the M5 Single Directory Components task on
+  `feat/m5-dashboard-components`. Added stable, schema-validated site-card,
+  health-badge, and findings-table components with responsive styling and
+  accessible score/severity output. A new permission-protected dashboard at
+  `/admin/health-monitor/dashboard` renders live Site/Finding entity data,
+  carries entity/list cacheability, and is linked from the admin content menu.
+  Live local rendering returns HTTP 200 for both demo sites; the component
+  kernel test covers nested rendering, a critical finding row, and all three
+  CSS libraries. PHPCS and PHPStan pass; the full suite passes with 43 tests
+  and 204 assertions. The four deprecations remain upstream Key 1.22 notices.
+  The browser screenshot host was unavailable, so verification used rendered
+  HTML plus DOM assertions. Next: add HTMX refresh and filters around the
+  dashboard's stable component structure.
 
 - 2026-11-11, Codex — Completed the M5 starterkit task on
   `feat/m5-dashboard-ui`. Generated `hm_theme` from Drupal 11.4.11's
