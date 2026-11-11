@@ -41,13 +41,13 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Key module for secrets
 
 ## M4 — Analysis
-- [ ] drupal.org release data client (cached)
-- [ ] Analyzer: security / update / unsupported / D12 blocker findings
-- [ ] Health score + unit tests
-- [ ] Upgrade Status results ingestion
+- [x] drupal.org release data client (cached)
+- [x] Analyzer: security / update / unsupported / D12 blocker findings
+- [x] Health score + unit tests
+- [x] Upgrade Status results ingestion
 
 ## M5 — Dashboard UI
-- [ ] `hm_theme` from starterkit
+- [x] `hm_theme` from starterkit
 - [ ] SDC: site card, health badge, findings table
 - [ ] HTMX refresh and filters
 
@@ -59,6 +59,86 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-11, Codex — Completed the M5 starterkit task on
+  `feat/m5-dashboard-ui`. Generated `hm_theme` from Drupal 11.4.11's
+  Starterkit, retained its attributed OOP preprocess hook with strict typing,
+  enabled it as the default theme, and exported matching block placements for
+  branding, messages, page title, local actions/tasks, and sidebar menus. A
+  live anonymous request returns HTTP 200 and loads the new theme's assets.
+  PHPCS and PHPStan pass; the full suite passes with 42 tests and 195
+  assertions. The four deprecations remain upstream Key 1.22 notices. Local
+  PHPUnit needs `SIMPLETEST_DB=mysql://db:db@db/db` supplied explicitly for
+  kernel tests. Next: build the site card, health badge, and findings table as
+  Single Directory Components.
+
+- 2026-11-05, Codex — Completed Upgrade Status ingestion and therefore M4 on
+  `feat/m4-release-data`. The core-only agent optionally reads Upgrade Status's
+  saved key/value results and emits a versioned, maximum-250-project summary
+  with explicit not-installed, never-scanned, available, stale, and failed
+  states. Results older than 30 days are stale; malformed results and scan
+  transport failures are not treated as clean scans. The monitor validates the
+  bounded payload and only reconciles fresh scans targeting Drupal 12. Current
+  scan errors create a high-severity D12 blocker; a fresh clean scan resolves
+  only that project's scan-backed blocker. Missing, stale, failed, or D11-target
+  evidence preserves prior findings. Finding now records `release_data` versus
+  `upgrade_status` evidence so the two lifecycles cannot clear each other; an
+  open release-data blocker suppresses a duplicate scan blocker. Added a
+  post-update storage migration, including a repair update discovered by an
+  end-to-end cron run, and verified both demo agents return HTTP 200 afterward.
+  PHPCS and PHPStan pass; the full suite passes with 42 tests and 195 assertions.
+  The four deprecations remain upstream Key 1.22 notices. M4 is complete; next
+  blueprint task is M5's `hm_theme` starterkit. Local Beacon Staging currently
+  scores 92 because the 12-check window correctly retains two HTTP 500 checks
+  produced while testing its stale multisite container; successful checks will
+  age them out.
+
+- 2026-11-05, Codex — Completed the M4 health score on
+  `feat/m4-release-data`. A pure calculator starts at 100 and applies capped,
+  multiplicative penalties for open security, unsupported, D12 blocker, and
+  regular update findings, plus a proportional uptime penalty capped at 30
+  points across the latest 12 checks. Missing uptime history is neutral and the
+  lower boundary is zero. A persistence service reads only open Findings and
+  the bounded uptime window, then avoids saving Site when the score is
+  unchanged. Collection recalculates after every recorded result, including
+  connection failures; on successful collection it analyzes the new Snapshot
+  first, so the score includes current findings. Unit tests cover every weight,
+  multiplicity caps, mixed penalties, downtime, no history, and boundaries; a
+  kernel test covers resolved-finding exclusion and the 12-check window. Next:
+  Upgrade Status results ingestion, the last M4 task. PHPCS and PHPStan pass;
+  the full suite passes with 36 tests and 155 assertions. The four deprecations
+  remain upstream Key 1.22 notices.
+
+- 2026-11-05, Codex — Completed the M4 deterministic analyzer on
+  `feat/m4-release-data`. Agent module entries now identify core, contributed,
+  and custom origin and map contributed submodules to their drupal.org project.
+  Every persisted Snapshot triggers analysis of core and identifiable contrib
+  projects. Stable published releases are evaluated for security updates,
+  regular same-major updates, unsupported project/branch/security coverage,
+  and Drupal 12 compatibility. Findings are upserted by Site + project + type;
+  disappeared findings and removed projects are resolved only with complete
+  successful evidence, while release-feed failures preserve existing alerts.
+  Missing compatibility metadata remains unknown instead of becoming a false
+  D12 blocker. Unit and kernel coverage exercises all finding types, legacy
+  versions, prerelease exclusion, core releases, and reconciliation lifecycle.
+  Live checks verified agent provenance and produced no false finding for the
+  installed Drupal core. PHPCS and PHPStan pass; the full PHPUnit suite passes
+  with 25 tests and 141 assertions. The four deprecations remain upstream Key
+  1.22 notices. Next: health score calculation and tests.
+
+- 2026-11-05, Codex — Completed the first M4 task on `feat/m4-release-data`.
+  Added an autowired drupal.org release-history client with typed project/release
+  value objects and an explicit success/unavailable result, so an outage cannot
+  be interpreted as a project with no releases. It validates project machine
+  names, accepts at most 5 MB of XML with external networking disabled, normalizes
+  project status/supported branches plus release security/core compatibility
+  metadata, caches successful lookups for six hours and failures for five minutes,
+  and logs only fresh failures. Fixture-based tests cover success, empty projects,
+  malformed/mismatched XML, HTTP/network errors, validation, and both cache TTLs.
+  A live Token lookup returned 25 releases with 8.x-1.18 first. PHPCS and PHPStan
+  pass; the full suite passes with 18 tests and 104 assertions. The four
+  deprecations remain upstream Key 1.22 notices. Next: deterministic analyzers for
+  security, regular update, unsupported, and Drupal 12 blocker Findings.
 
 - 2026-11-05, Codex — Fast-forwarded and pushed M2, M3, and the Railway cron
   work to `main`. GitHub Actions run 42043747870 passed both quality/tests and
@@ -77,10 +157,9 @@ _Latest session first. Who, date, what's half-done, what's next, gotchas._
   networking, no volume, and DB/Drupal variables expressed as references to the
   existing MySQL/app variables (no secret values were copied). Deployment
   `4d863894-f5e5-43d6-9baa-82a2b5ab9cc6` built successfully; the first scheduled
-  execution started at 14:05:48 UTC and exited normally at 14:05:52 UTC. Production
-  At creation time GitHub `main` was still at the M1-era code; the completed M2/M3
-  work was subsequently merged and deployed. Next: M4's cached drupal.org
-  release-data client.
+  execution started at 14:05:48 UTC and exited normally at 14:05:52 UTC. At
+  creation time GitHub `main` was still at the M1-era code; the completed M2/M3
+  work was subsequently merged and deployed.
 
 - 2026-11-03, Codex — Completed M3 on `feat/m3-agent-endpoint`. Added cron
   scheduling for active Sites, an attributed Queue Worker, signed Guzzle

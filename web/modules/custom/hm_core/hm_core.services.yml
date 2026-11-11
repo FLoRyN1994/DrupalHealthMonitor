@@ -9,6 +9,28 @@ services:
 
   Drupal\hm_core\SiteCheckScheduler: ~
 
+  Drupal\hm_core\Analysis\ProjectAnalyzer: ~
+
+  Drupal\hm_core\Analysis\FindingReconciler: ~
+
+  Drupal\hm_core\Analysis\HealthScoreCalculator: ~
+
+  Drupal\hm_core\Analysis\HealthScoreUpdater: ~
+
+  Drupal\hm_core\Analysis\UpgradeStatusAnalyzer: ~
+
   Drupal\hm_core\SiteCheckRunner:
     arguments:
       $logger: '@logger.channel.hm_core'
+
+  Drupal\hm_core\Analysis\SnapshotAnalyzer:
+    arguments:
+      $logger: '@logger.channel.hm_core'
+
+  Drupal\hm_core\Release\DrupalOrgReleaseDataClient:
+    arguments:
+      $cache: '@cache.default'
+      $logger: '@logger.channel.hm_core'
+
+  Drupal\hm_core\Release\ReleaseDataClientInterface:
+    alias: Drupal\hm_core\Release\DrupalOrgReleaseDataClient

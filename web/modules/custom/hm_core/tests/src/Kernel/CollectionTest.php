@@ -5,9 +5,17 @@ declare(strict_types=1);
 namespace Drupal\Tests\hm_core\Kernel;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\hm_core\Analysis\FindingReconciler;
+use Drupal\hm_core\Analysis\HealthScoreCalculator;
+use Drupal\hm_core\Analysis\HealthScoreUpdater;
+use Drupal\hm_core\Analysis\ProjectAnalyzer;
+use Drupal\hm_core\Analysis\SnapshotAnalyzer;
+use Drupal\hm_core\Analysis\UpgradeStatusAnalyzer;
 use Drupal\hm_core\Entity\Client as HmClient;
 use Drupal\hm_core\Entity\Site;
 use Drupal\hm_core\Entity\Snapshot;
+use Drupal\hm_core\Release\ReleaseDataClientInterface;
+use Drupal\hm_core\Release\ReleaseDataResult;
 use Drupal\hm_core\SiteCheckRunner;
 use Drupal\hm_core\SiteCheckScheduler;
 use Drupal\KernelTests\KernelTestBase;
@@ -60,6 +68,7 @@ final class CollectionTest extends KernelTestBase {
     $this->installEntitySchema('hm_client');
     $this->installEntitySchema('hm_site');
     $this->installEntitySchema('hm_snapshot');
+    $this->installEntitySchema('hm_finding');
     $this->installSchema('hm_core', ['hm_uptime_check']);
   }
 
@@ -74,7 +83,12 @@ final class CollectionTest extends KernelTestBase {
       'core_version' => '11.4.11',
       'php_version' => '8.4.27',
       'modules' => [
-        'system' => ['name' => 'System', 'version' => '11.4.11'],
+        'system' => [
+          'name' => 'System',
+          'version' => '11.4.11',
+          'project' => NULL,
+          'origin' => 'core',
+        ],
       ],
       'pending_updates' => 0,
     ];
@@ -90,12 +104,36 @@ final class CollectionTest extends KernelTestBase {
     $time->method('getCurrentTime')->willReturn(self::TIMESTAMP);
     $time->method('getCurrentMicroTime')->willReturnOnConsecutiveCalls(1000.0, 1000.125);
 
+    $release_client = $this->createMock(ReleaseDataClientInterface::class);
+    $release_client->method('getProject')->willReturn(
+      ReleaseDataResult::unavailable('test', 'Not available in test.', self::TIMESTAMP),
+    );
+    $finding_reconciler = new FindingReconciler(
+      $this->container->get('entity_type.manager'),
+    );
+    $snapshot_analyzer = new SnapshotAnalyzer(
+      $release_client,
+      new ProjectAnalyzer(),
+      $finding_reconciler,
+      new UpgradeStatusAnalyzer(
+        $this->container->get('entity_type.manager'),
+        $finding_reconciler,
+      ),
+      new NullLogger(),
+    );
+    $health_score_updater = new HealthScoreUpdater(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('database'),
+      new HealthScoreCalculator(),
+    );
     $runner = new SiteCheckRunner(
       $http_client,
       $this->container->get('entity_type.manager'),
       $this->container->get('database'),
       $time,
       new NullLogger(),
+      $snapshot_analyzer,
+      $health_score_updater,
     );
     $runner->check((int) $site->id());
 
