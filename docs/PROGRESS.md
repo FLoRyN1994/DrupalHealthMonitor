@@ -52,13 +52,31 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] HTMX refresh and filters
 
 ## M6 — AI and MCP
-- [ ] AI module + Anthropic provider; client report, release digest, D12 advice
+- [x] AI module + Anthropic provider; client report, release digest, D12 advice
 - [ ] MCP module tools: list_sites, get_site_findings, get_security_updates, generate_site_report
 - [ ] Install recipe `recipes/health_monitor` with demo content
 - [ ] README demo GIF + MCP demo
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-11, Codex — Completed M6's AI-report task on
+  `feat/m6-ai-reports`. Added Drupal AI plus the Anthropic provider, with the
+  API credential represented only by an environment-backed Key configuration
+  (`ANTHROPIC_API_KEY`) and `claude-sonnet-5` selected through exported config.
+  A permission-protected Site action builds deterministic context from open
+  Findings, calculates auditable effort hours in PHP, sends only JSON evidence
+  to a prompt that treats all values as untrusted data, validates the model's
+  three-field JSON response, and saves every result as a new `hm_ai_report`
+  version. Reports expose client summary, release digest, Drupal 12 advice,
+  effort, generation time, and model. Provider failures are logged and shown
+  safely without persisting partial reports. The form renders locally with
+  HTTP 200, post-update storage installation succeeds, Composer audit reports
+  no advisories, PHPCS and PHPStan pass, and the full suite passes with 49 tests
+  and 246 assertions. Six deprecations are upstream in Drupal AI 1.5.2. The
+  Railway app currently has no `ANTHROPIC_API_KEY`, so report generation will
+  remain safely unavailable in production until that secret is supplied. Next:
+  implement the four MCP tools against the same typed entity/report services.
 
 - 2026-11-11, Codex — Completed HTMX refresh/filtering and therefore M5 on
   `feat/m5-dashboard-components`. The dashboard now filters by environment,

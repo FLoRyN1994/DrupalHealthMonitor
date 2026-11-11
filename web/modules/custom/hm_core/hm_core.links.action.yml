@@ -23,3 +23,9 @@ hm_core.finding_add:
   title: 'Add finding'
   appears_on:
     - entity.hm_finding.collection
+
+hm_core.ai_report.generate:
+  route_name: hm_core.ai_report.generate
+  title: 'Generate AI report'
+  appears_on:
+    - entity.hm_site.canonical
