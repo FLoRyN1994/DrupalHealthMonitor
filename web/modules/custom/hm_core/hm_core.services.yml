@@ -19,6 +19,19 @@ services:
 
   Drupal\hm_core\Analysis\UpgradeStatusAnalyzer: ~
 
+  Drupal\hm_core\Report\ReportPromptBuilder: ~
+
+  Drupal\hm_core\Report\SiteReportContextBuilder: ~
+
+  Drupal\hm_core\Report\AiReportTextGenerator:
+    arguments:
+      $providerManager: '@ai.provider'
+
+  Drupal\hm_core\Report\ReportTextGeneratorInterface:
+    alias: Drupal\hm_core\Report\AiReportTextGenerator
+
+  Drupal\hm_core\Report\SiteReportService: ~
+
   Drupal\hm_core\SiteCheckRunner:
     arguments:
       $logger: '@logger.channel.hm_core'

@@ -4,6 +4,8 @@ description: Provides fleet monitoring entities, collection, analysis, and repor
 package: Health Monitor
 core_version_requirement: ^11.4
 dependencies:
+  - ai:ai
+  - ai_provider_anthropic:ai_provider_anthropic
   - drupal:options
   - drupal:views
   - key:key

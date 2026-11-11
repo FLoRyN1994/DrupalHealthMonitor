@@ -8,6 +8,7 @@
 declare(strict_types=1);
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\hm_core\Entity\AiReport;
 use Drupal\hm_core\Entity\Finding;
 
 /**
@@ -36,6 +37,23 @@ function hm_core_post_update_add_finding_source(): void {
  */
 function hm_core_post_update_ensure_finding_source_storage(): void {
   hm_core_install_finding_source_storage();
+}
+
+/**
+ * Installs storage for generated AI reports.
+ */
+function hm_core_post_update_install_ai_report(): void {
+  $database_schema = \Drupal::database()->schema();
+  if ($database_schema->tableExists('hm_ai_report')) {
+    return;
+  }
+
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_type = $entity_type_manager->getDefinition('hm_ai_report');
+  if ($entity_type->getClass() !== AiReport::class) {
+    throw new \UnexpectedValueException('AI report entity type definition is invalid.');
+  }
+  \Drupal::entityDefinitionUpdateManager()->installEntityType($entity_type);
 }
 
 /**

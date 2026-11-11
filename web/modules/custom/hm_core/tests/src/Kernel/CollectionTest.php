@@ -50,12 +50,16 @@ final class CollectionTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
+    'file',
     'filter',
     'key',
     'options',
     'system',
+    'text',
     'user',
     'views',
+    'ai',
+    'ai_provider_anthropic',
     'hm_core',
   ];
 
