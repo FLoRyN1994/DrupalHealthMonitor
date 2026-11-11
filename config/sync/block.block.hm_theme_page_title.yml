@@ -1,0 +1,20 @@
+uuid: 23dc73ac-df0d-4255-804d-b6979bed4d9e
+langcode: en
+status: true
+dependencies:
+  theme:
+    - hm_theme
+_core:
+  default_config_hash: Oh72CHUkp6cj6dbrXMK2hzCsM05w9cHVoD22rMLQUfk
+id: hm_theme_page_title
+theme: hm_theme
+region: content
+weight: -30
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: 'Page title'
+  label_display: '0'
+  provider: core
+visibility: {  }
