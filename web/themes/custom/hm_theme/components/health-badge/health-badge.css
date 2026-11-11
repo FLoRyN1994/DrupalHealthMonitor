@@ -1,0 +1,36 @@
+.health-badge {
+  display: inline-flex;
+  align-items: baseline;
+  min-width: 4.75rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.health-badge--healthy {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.health-badge--attention {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.health-badge--critical {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.health-badge__score {
+  font-size: 1.25rem;
+}
+
+.health-badge__total {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.75;
+}

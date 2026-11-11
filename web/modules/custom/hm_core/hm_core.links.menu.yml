@@ -1,3 +1,10 @@
+hm_core.dashboard:
+  title: 'Health Monitor dashboard'
+  description: 'Review fleet health and open findings.'
+  route_name: hm_core.dashboard
+  parent: system.admin_content
+  weight: -20
+
 hm_core.clients:
   title: 'Health Monitor clients'
   description: 'Manage clients whose sites are monitored.'

@@ -1,0 +1,17 @@
+.hm-dashboard {
+  display: grid;
+  gap: 2rem;
+  max-width: 90rem;
+}
+
+.hm-dashboard__intro {
+  margin: 0;
+  color: #52606d;
+  font-size: 1rem;
+}
+
+.hm-dashboard__sites {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+}
