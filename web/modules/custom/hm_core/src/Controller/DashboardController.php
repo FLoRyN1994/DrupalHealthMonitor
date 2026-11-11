@@ -8,8 +8,11 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\AutowireTrait;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\hm_core\Form\DashboardFilterForm;
 use Drupal\hm_core\Entity\Finding;
 use Drupal\hm_core\Entity\Site;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Builds the fleet health dashboard.
@@ -23,6 +26,8 @@ final class DashboardController implements ContainerInjectionInterface {
    */
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly FormBuilderInterface $formBuilder,
+    private readonly RequestStack $requestStack,
   ) {}
 
   /**
@@ -35,18 +40,41 @@ final class DashboardController implements ContainerInjectionInterface {
     $siteStorage = $this->entityTypeManager->getStorage('hm_site');
     $findingStorage = $this->entityTypeManager->getStorage('hm_finding');
 
-    $siteIds = $siteStorage->getQuery()
+    $request = $this->requestStack->getCurrentRequest();
+    $environment = $request?->query->getString('environment', 'all') ?? 'all';
+    $status = $request?->query->getString('status', 'all') ?? 'all';
+    $health = $request?->query->getString('health', 'all') ?? 'all';
+
+    $siteQuery = $siteStorage->getQuery()
       ->accessCheck(FALSE)
-      ->sort('name')
-      ->execute();
+      ->sort('name');
+    if (in_array($environment, ['prod', 'stage', 'dev'], TRUE)) {
+      $siteQuery->condition('environment', $environment);
+    }
+    if (in_array($status, ['active', 'paused', 'disabled'], TRUE)) {
+      $siteQuery->condition('status', $status);
+    }
+    match ($health) {
+      'healthy' => $siteQuery->condition('health_score', 90, '>='),
+      'attention' => $siteQuery
+        ->condition('health_score', 70, '>=')
+        ->condition('health_score', 90, '<'),
+      'critical' => $siteQuery->condition('health_score', 70, '<'),
+      default => $siteQuery,
+    };
+    $siteIds = $siteQuery->execute();
     $sites = $siteStorage->loadMultiple($siteIds);
 
-    $findingIds = $findingStorage->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('resolved', FALSE)
-      ->sort('severity')
-      ->sort('project_name')
-      ->execute();
+    $findingIds = [];
+    if ($siteIds !== []) {
+      $findingIds = $findingStorage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('resolved', FALSE)
+        ->condition('site', $siteIds, 'IN')
+        ->sort('severity')
+        ->sort('project_name')
+        ->execute();
+    }
     $findings = $findingStorage->loadMultiple($findingIds);
 
     $findingCounts = [];
@@ -101,24 +129,37 @@ final class DashboardController implements ContainerInjectionInterface {
       '#type' => 'container',
       '#attributes' => ['class' => ['hm-dashboard']],
       '#cache' => [
+        'contexts' => [
+          'url.query_args:environment',
+          'url.query_args:status',
+          'url.query_args:health',
+        ],
         'tags' => ['hm_site_list', 'hm_finding_list'],
       ],
       'intro' => [
         '#markup' => '<p class="hm-dashboard__intro">Fleet health, open findings, and upgrade risks in one place.</p>',
       ],
-      'sites' => [
+      'filters' => $this->formBuilder->getForm(DashboardFilterForm::class),
+      'results' => [
         '#type' => 'container',
-        '#attributes' => ['class' => ['hm-dashboard__sites']],
-        'cards' => $siteCards ?: [
-          '#markup' => '<p>No monitored sites have been added yet.</p>',
+        '#attributes' => [
+          'id' => 'hm-dashboard-results',
+          'class' => ['hm-dashboard__results'],
         ],
-      ],
-      'findings' => [
-        '#type' => 'component',
-        '#component' => 'hm_theme:findings-table',
-        '#props' => [
-          'caption' => 'Open findings across the fleet',
-          'findings' => $findingRows,
+        'sites' => [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['hm-dashboard__sites']],
+          'cards' => $siteCards ?: [
+            '#markup' => '<p>No monitored sites match the selected filters.</p>',
+          ],
+        ],
+        'findings' => [
+          '#type' => 'component',
+          '#component' => 'hm_theme:findings-table',
+          '#props' => [
+            'caption' => 'Open findings for the selected sites',
+            'findings' => $findingRows,
+          ],
         ],
       ],
     ];
