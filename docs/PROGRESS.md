@@ -60,6 +60,18 @@ Update this file at the end of every session (see AGENTS.md).
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
+- 2026-11-12, Codex — The first post-MVP Railway cron run exposed an upstream
+  MCP 1.2.3 defect: its removed SSE message-storage service is still requested
+  by `mcp_cron()`. Added a conditional compatibility service that is a no-op for
+  the stateless HTTP transport and yields automatically if upstream restores
+  the service. Also made the container's private file root writable only by
+  Drupal so core can create its protective `.htaccess`. A real verbose local
+  cron run now completes without the service exception. Composer
+  validation/audit, PHPCS (94 files), PHPStan (76 files), and PHPUnit (51
+  tests, 288 assertions) pass; seven upstream AI/JSON-RPC deprecations remain.
+  Next: merge the hotfix, redeploy both services, and verify a clean scheduled
+  production run.
+
 - 2026-11-12, Codex — Completed the final M6 task and the full MVP on
   `feat/m6-readme-demo`. The README now presents the deployed product, an
   animated GIF captured from the authenticated production dashboard, accurate
