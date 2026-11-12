@@ -1,0 +1,13 @@
+_meta:
+  version: '1.0'
+  entity_type: hm_client
+  uuid: 200e11c2-62a8-48b0-9ed3-b273871b169d
+default:
+  name:
+    - value: 'Beacon Ltd.'
+  contact_email:
+    - value: web@beacon.example
+  retainer_tier:
+    - value: Standard
+  notes:
+    - value: 'Staging site used to validate maintenance releases.'

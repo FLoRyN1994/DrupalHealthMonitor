@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: hm_snapshot
+  uuid: 5d23878a-bbf6-4ad0-b14a-723beae03306
+  depends:
+    d7d66f13-0173-4dcf-8d9a-a2a86e95bf21: hm_site
+default:
+  site:
+    - entity: d7d66f13-0173-4dcf-8d9a-a2a86e95bf21
+  checked_at:
+    - value: 1794466800
+  core_version:
+    - value: 10.6.2
+  php_version:
+    - value: 8.3.14
+  modules:
+    - value: '{"webform":{"version":"6.2.7","project":"webform","origin":"contrib"},"paragraphs":{"version":"1.19.0","project":"paragraphs","origin":"contrib"}}'
+  pending_updates:
+    - value: 0
+  raw_payload:
+    - value: '{"schema_version":1,"demo":true,"pending_updates":0}'

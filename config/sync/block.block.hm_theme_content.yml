@@ -1,0 +1,22 @@
+uuid: 4683ae2a-ec6f-45ca-9817-e96c38d3149c
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - hm_theme
+_core:
+  default_config_hash: TN5rU5hgqS2Zk5ahSuW3RlnmbzwBXtSNSsZuryRSrww
+id: hm_theme_content
+theme: hm_theme
+region: content
+weight: 0
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  label_display: '0'
+  provider: system
+visibility: {  }
