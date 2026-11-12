@@ -60,6 +60,22 @@ Update this file at the end of every session (see AGENTS.md).
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
+- 2026-11-11, Codex — Production incident while deploying the AI-report merge:
+  `railway up` preserved local macOS checkout modes (Drupal files 0600 and
+  directories 0700), producing HTTP 403 from PHP-FPM. More importantly, the
+  pre-deploy script treated a failed Drupal bootstrap as an empty database and
+  ran `site:install --existing-config`, which dropped and recreated the Railway
+  schema. Railway PITR is disabled for this stock `mysql:8` service and there
+  are no on-demand backups, so the prior operational rows are not recoverable.
+  The install did restore all exported configuration and there was no client
+  report data yet. The deployment guard now queries `information_schema` and
+  refuses `site:install` whenever any table exists, and the Docker build
+  normalizes web-root permissions. A local production-image build verifies
+  directories 0755, files 0644, and valid shell syntax. This fix must be merged
+  and deployed before feature work resumes; production is temporarily serving
+  403 until that corrected image replaces deployment
+  `2ca58555-c9d1-446b-8dc3-c190260eb288`.
+
 - 2026-11-11, Codex — Completed M6's AI-report task on
   `feat/m6-ai-reports`. Added Drupal AI plus the Anthropic provider, with the
   API credential represented only by an environment-backed Key configuration

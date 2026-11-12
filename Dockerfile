@@ -40,6 +40,8 @@ COPY config/ config/
 COPY scripts/ scripts/
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh scripts/*.sh \
+ && find web -type d -exec chmod 755 {} + \
+ && find web -type f -exec chmod 644 {} + \
  && mkdir -p web/sites/default/files \
  && chown -R www-data:www-data web/sites/default/files
 
