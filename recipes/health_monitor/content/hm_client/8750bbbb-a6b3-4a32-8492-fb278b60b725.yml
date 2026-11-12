@@ -1,0 +1,13 @@
+_meta:
+  version: '1.0'
+  entity_type: hm_client
+  uuid: 8750bbbb-a6b3-4a32-8492-fb278b60b725
+default:
+  name:
+    - value: 'Acme Inc.'
+  contact_email:
+    - value: maintenance@acme.example
+  retainer_tier:
+    - value: Premium
+  notes:
+    - value: 'Production commerce site with a weekly security SLA.'

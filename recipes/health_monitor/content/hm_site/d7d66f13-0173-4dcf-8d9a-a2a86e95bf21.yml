@@ -1,0 +1,19 @@
+_meta:
+  version: '1.0'
+  entity_type: hm_site
+  uuid: d7d66f13-0173-4dcf-8d9a-a2a86e95bf21
+  depends:
+    200e11c2-62a8-48b0-9ed3-b273871b169d: hm_client
+default:
+  name:
+    - value: 'Beacon Staging'
+  base_url:
+    - value: 'https://client-two.ddev.site'
+  environment:
+    - value: stage
+  client:
+    - entity: 200e11c2-62a8-48b0-9ed3-b273871b169d
+  status:
+    - value: paused
+  health_score:
+    - value: 65

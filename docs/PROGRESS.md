@@ -54,11 +54,27 @@ Update this file at the end of every session (see AGENTS.md).
 ## M6 — AI and MCP
 - [x] AI module + Anthropic provider; client report, release digest, D12 advice
 - [x] MCP module tools: list_sites, get_site_findings, get_security_updates, generate_site_report
-- [ ] Install recipe `recipes/health_monitor` with demo content
+- [x] Install recipe `recipes/health_monitor` with demo content
 - [ ] README demo GIF + MCP demo
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-12, Codex — Completed the M6 install recipe on
+  `feat/m6-install-recipe`. `recipes/health_monitor` installs the dashboard
+  theme, monitor, AI, MCP, and OAuth stack; configures the environment-backed
+  Anthropic key, least-privilege MCP surface, OAuth scope, theme blocks, and
+  administrative Views; and imports two clients, two paused sites, two
+  snapshots, and five representative findings. Paused defaults prevent cron
+  from calling placeholder endpoints outside DDEV; `ddev demo-sites` attaches
+  local secrets and activates them. The recipe also fixes the missing main-page
+  content block. It applies successfully twice on the live DDEV site without
+  duplicate content, its authenticated dashboard renders both sites/findings,
+  and a fresh-kernel test passes with 24 assertions. Composer validation/audit,
+  PHPCS, and PHPStan pass; the full suite passes with 51 tests and 287
+  assertions. The seven remaining deprecations are upstream in AI/JSON-RPC.
+  Next: finish the README, dashboard demo GIF, and documented MCP client/demo,
+  the final blueprint task.
 
 - 2026-11-12, Codex — Completed M6's MCP task on `feat/m6-mcp-tools`.
   Installed stable MCP 1.2.3 and security-fixed Simple OAuth 6.1.4, exposed

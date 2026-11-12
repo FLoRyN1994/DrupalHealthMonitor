@@ -1,0 +1,23 @@
+_meta:
+  version: '1.0'
+  entity_type: hm_finding
+  uuid: 33333333-3333-4333-8333-333333333333
+  depends:
+    64373c6e-001b-4bbf-9354-8b61e8496063: hm_site
+default:
+  site:
+    - entity: 64373c6e-001b-4bbf-9354-8b61e8496063
+  project_name:
+    - value: paragraphs
+  type:
+    - value: d12_blocker
+  severity:
+    - value: medium
+  source:
+    - value: upgrade_status
+  current_version:
+    - value: 1.19.0
+  recommended_version:
+    - value: 'Review compatibility findings'
+  resolved:
+    - value: false

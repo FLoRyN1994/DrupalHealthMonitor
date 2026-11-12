@@ -1,0 +1,19 @@
+_meta:
+  version: '1.0'
+  entity_type: hm_site
+  uuid: 64373c6e-001b-4bbf-9354-8b61e8496063
+  depends:
+    8750bbbb-a6b3-4a32-8492-fb278b60b725: hm_client
+default:
+  name:
+    - value: 'Acme Production'
+  base_url:
+    - value: 'https://client-one.ddev.site'
+  environment:
+    - value: prod
+  client:
+    - entity: 8750bbbb-a6b3-4a32-8492-fb278b60b725
+  status:
+    - value: paused
+  health_score:
+    - value: 45
