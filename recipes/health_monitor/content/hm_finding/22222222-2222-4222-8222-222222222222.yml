@@ -1,0 +1,23 @@
+_meta:
+  version: '1.0'
+  entity_type: hm_finding
+  uuid: 22222222-2222-4222-8222-222222222222
+  depends:
+    64373c6e-001b-4bbf-9354-8b61e8496063: hm_site
+default:
+  site:
+    - entity: 64373c6e-001b-4bbf-9354-8b61e8496063
+  project_name:
+    - value: swiftmailer
+  type:
+    - value: unsupported
+  severity:
+    - value: high
+  source:
+    - value: release_data
+  current_version:
+    - value: 2.4.0
+  recommended_version:
+    - value: symfony_mailer
+  resolved:
+    - value: false

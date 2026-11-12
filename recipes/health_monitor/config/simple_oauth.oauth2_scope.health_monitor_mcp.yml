@@ -1,0 +1,15 @@
+langcode: en
+status: true
+dependencies: {  }
+id: health_monitor_mcp
+name: 'health_monitor:mcp'
+description: 'Use the Drupal Health Monitor MCP server.'
+grant_types:
+  client_credentials:
+    status: true
+    description: 'Machine access to Health Monitor MCP tools'
+umbrella: false
+parent: null
+granularity_id: permission
+granularity_configuration:
+  permission: 'use mcp server'

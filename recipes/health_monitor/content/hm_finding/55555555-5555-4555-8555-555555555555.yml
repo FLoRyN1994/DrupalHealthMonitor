@@ -1,0 +1,23 @@
+_meta:
+  version: '1.0'
+  entity_type: hm_finding
+  uuid: 55555555-5555-4555-8555-555555555555
+  depends:
+    d7d66f13-0173-4dcf-8d9a-a2a86e95bf21: hm_site
+default:
+  site:
+    - entity: d7d66f13-0173-4dcf-8d9a-a2a86e95bf21
+  project_name:
+    - value: drupal
+  type:
+    - value: update
+  severity:
+    - value: medium
+  source:
+    - value: release_data
+  current_version:
+    - value: 10.6.2
+  recommended_version:
+    - value: 10.6.4
+  resolved:
+    - value: false

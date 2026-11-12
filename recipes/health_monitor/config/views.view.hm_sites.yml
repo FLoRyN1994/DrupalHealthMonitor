@@ -1,0 +1,94 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - hm_core
+    - options
+    - user
+id: hm_sites
+label: Sites
+module: hm_core
+description: 'Administrative Sites list.'
+tag: 'Health Monitor'
+base_table: hm_site
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Default
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Sites
+      fields:
+        name:
+          id: name
+          table: hm_site
+          field: name
+          entity_type: hm_site
+          entity_field: name
+          plugin_id: field
+          label: Name
+        base_url:
+          id: base_url
+          table: hm_site
+          field: base_url
+          entity_type: hm_site
+          entity_field: base_url
+          plugin_id: field
+          label: 'Base URL'
+        environment:
+          id: environment
+          table: hm_site
+          field: environment
+          entity_type: hm_site
+          entity_field: environment
+          plugin_id: field
+          label: Environment
+        health_score:
+          id: health_score
+          table: hm_site
+          field: health_score
+          entity_type: hm_site
+          entity_field: health_score
+          plugin_id: field
+          label: 'Health score'
+      pager:
+        type: full
+        options:
+          items_per_page: 50
+      access:
+        type: perm
+        options:
+          perm: 'administer health monitor'
+      cache:
+        type: tag
+        options: {  }
+      sorts:
+        health_score:
+          id: health_score
+          table: hm_site
+          field: health_score
+          entity_type: hm_site
+          entity_field: health_score
+          plugin_id: standard
+          order: ASC
+      style:
+        type: table
+        options:
+          class: ''
+      row:
+        type: fields
+        options: {  }
+      query:
+        type: views_query
+        options: {  }
+      display_extenders: {  }
+  page_1:
+    id: page_1
+    display_title: Page
+    display_plugin: page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: admin/health-monitor/reports/sites

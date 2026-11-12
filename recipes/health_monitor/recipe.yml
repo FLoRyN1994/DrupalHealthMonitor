@@ -1,0 +1,70 @@
+name: 'Drupal Health Monitor'
+description: 'Installs the fleet dashboard, AI and MCP integration, and safe demo content.'
+type: 'Site'
+install:
+  - block
+  - dblog
+  - dynamic_page_cache
+  - page_cache
+  - update
+  - ai
+  - ai_provider_anthropic
+  - mcp
+  - simple_oauth
+  - hm_core
+  - hm_theme
+config:
+  strict: false
+  actions:
+    system.site:
+      simpleConfigUpdate:
+        name: 'Drupal Health Monitor'
+        page.front: /user/login
+    system.theme:
+      simpleConfigUpdate:
+        default: hm_theme
+    ai_provider_anthropic.settings:
+      simpleConfigUpdate:
+        api_key: anthropic_api
+    ai.settings:
+      simpleConfigUpdate:
+        default_providers:
+          chat:
+            provider_id: anthropic
+            model_id: claude-sonnet-5
+    simple_oauth.settings:
+      simpleConfigUpdate:
+        public_key: 'private://simple_oauth/public.key'
+        private_key: 'private://simple_oauth/private.key'
+    mcp.settings:
+      simpleConfigUpdate:
+        enable_auth: false
+        auth_settings: {  }
+        plugins:
+          general:
+            enabled: false
+            config: {  }
+          aif:
+            enabled: false
+          tools:
+            enabled: false
+          aia:
+            enabled: false
+          drush:
+            enabled: false
+          jsonapi:
+            enabled: false
+          content:
+            enabled: false
+          list:
+            enabled: true
+            roles:
+              - mcp_client
+          get:
+            enabled: true
+            roles:
+              - mcp_client
+          generate:
+            enabled: true
+            roles:
+              - mcp_client

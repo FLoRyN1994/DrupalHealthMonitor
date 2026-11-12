@@ -1,0 +1,21 @@
+_meta:
+  version: '1.0'
+  entity_type: hm_snapshot
+  uuid: 5079e406-6aa5-4605-924d-f36d9c8bd531
+  depends:
+    64373c6e-001b-4bbf-9354-8b61e8496063: hm_site
+default:
+  site:
+    - entity: 64373c6e-001b-4bbf-9354-8b61e8496063
+  checked_at:
+    - value: 1794466800
+  core_version:
+    - value: 11.4.8
+  php_version:
+    - value: 8.4.15
+  modules:
+    - value: '{"token":{"version":"1.15.0","project":"token","origin":"contrib"},"swiftmailer":{"version":"2.4.0","project":"swiftmailer","origin":"contrib"}}'
+  pending_updates:
+    - value: 1
+  raw_payload:
+    - value: '{"schema_version":1,"demo":true,"pending_updates":1}'

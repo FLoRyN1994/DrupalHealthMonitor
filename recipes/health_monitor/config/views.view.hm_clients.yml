@@ -1,0 +1,85 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - hm_core
+    - user
+id: hm_clients
+label: Clients
+module: hm_core
+description: 'Administrative Clients list.'
+tag: 'Health Monitor'
+base_table: hm_client
+base_field: id
+display:
+  default:
+    id: default
+    display_title: Default
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Clients
+      fields:
+        name:
+          id: name
+          table: hm_client
+          field: name
+          entity_type: hm_client
+          entity_field: name
+          plugin_id: field
+          label: Name
+        contact_email:
+          id: contact_email
+          table: hm_client
+          field: contact_email
+          entity_type: hm_client
+          entity_field: contact_email
+          plugin_id: field
+          label: 'Contact email'
+        retainer_tier:
+          id: retainer_tier
+          table: hm_client
+          field: retainer_tier
+          entity_type: hm_client
+          entity_field: retainer_tier
+          plugin_id: field
+          label: 'Retainer tier'
+      pager:
+        type: full
+        options:
+          items_per_page: 50
+      access:
+        type: perm
+        options:
+          perm: 'administer health monitor'
+      cache:
+        type: tag
+        options: {  }
+      sorts:
+        name:
+          id: name
+          table: hm_client
+          field: name
+          entity_type: hm_client
+          entity_field: name
+          plugin_id: standard
+          order: ASC
+      style:
+        type: table
+        options:
+          class: ''
+      row:
+        type: fields
+        options: {  }
+      query:
+        type: views_query
+        options: {  }
+      display_extenders: {  }
+  page_1:
+    id: page_1
+    display_title: Page
+    display_plugin: page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: admin/health-monitor/reports/clients

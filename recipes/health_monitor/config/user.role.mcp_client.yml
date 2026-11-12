@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - mcp
+id: mcp_client
+label: 'MCP Client'
+weight: 2
+is_admin: false
+permissions:
+  - 'use mcp server'
