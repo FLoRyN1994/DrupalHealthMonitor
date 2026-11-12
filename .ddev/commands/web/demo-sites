@@ -8,6 +8,12 @@ set -eu -o pipefail
 
 cd /var/www/html
 
+if [[ ! -x vendor/bin/drush ]]; then
+  printf 'Composer dependencies are not installed; skipping demo-site provisioning.\n'
+  printf 'Run ddev composer install, then ddev demo-sites after installing the monitor.\n'
+  exit 0
+fi
+
 provision_site() {
   local site_directory="$1"
   local database_name="$2"
