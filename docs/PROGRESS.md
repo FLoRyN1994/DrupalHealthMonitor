@@ -60,6 +60,16 @@ Update this file at the end of every session (see AGENTS.md).
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
+- 2026-11-12, Codex — The MCP compatibility hotfix deployed successfully and
+  eliminated the scheduled cron service exception. Its first run showed the
+  remaining private-file warning still occurs despite correct `0700
+  www-data:www-data` ownership in the app container. The follow-up on
+  `fix/private-htaccess` creates Drupal core's canonical deny-all `.htaccess`
+  before either runtime bootstraps. The generated file matches core's rules and
+  mode `0444`; the full Composer, PHPCS, PHPStan, and PHPUnit gate passes. Next:
+  pass CI, deploy both services, and confirm the scheduled cron log contains
+  neither error.
+
 - 2026-11-12, Codex — The first post-MVP Railway cron run exposed an upstream
   MCP 1.2.3 defect: its removed SSE message-storage service is still requested
   by `mcp_cron()`. Added a conditional compatibility service that is a no-op for
