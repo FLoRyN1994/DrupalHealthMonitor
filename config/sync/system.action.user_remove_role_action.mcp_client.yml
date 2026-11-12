@@ -1,0 +1,14 @@
+uuid: 7587e84c-387a-48ae-a987-24c49c6403bb
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.mcp_client
+  module:
+    - user
+id: user_remove_role_action.mcp_client
+label: 'Remove the MCP Client role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: mcp_client

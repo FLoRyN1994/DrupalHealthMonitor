@@ -919,3 +919,7 @@ if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 
 // Config sync lives outside the docroot, committed to git.
 $settings['config_sync_directory'] = '../config/sync';
+
+// OAuth signing keys are generated locally and injected from environment
+// variables in production. This directory is gitignored and never public.
+$settings['file_private_path'] = __DIR__ . '/private';

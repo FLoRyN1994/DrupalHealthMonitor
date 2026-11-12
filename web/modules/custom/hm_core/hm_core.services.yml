@@ -32,6 +32,8 @@ services:
 
   Drupal\hm_core\Report\SiteReportService: ~
 
+  Drupal\hm_core\Mcp\FleetToolService: ~
+
   Drupal\hm_core\SiteCheckRunner:
     arguments:
       $logger: '@logger.channel.hm_core'
