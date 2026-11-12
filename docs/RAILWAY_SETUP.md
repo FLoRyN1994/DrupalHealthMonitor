@@ -26,10 +26,17 @@ On the **app** service → **Variables**, add:
 | `DRUPAL_HASH_SALT` | a random 64-char string — generate with `openssl rand -hex 32` |
 | `DRUPAL_TRUSTED_HOST` | `health-monitor.tofdev.com` |
 | `DRUPAL_ADMIN_PASS` | a strong password (only used on the very first deploy) |
+| `SIMPLE_OAUTH_PRIVATE_KEY_B64` | base64-encoded RSA private key; never commit it |
+| `SIMPLE_OAUTH_PUBLIC_KEY_B64` | base64-encoded matching RSA public key |
 | `RAILWAY_ENVIRONMENT` | Railway sets this automatically — don't add it manually |
 
 `${{MySQL.MYSQLHOST}}`-style references pull the value live from the MySQL service, so
 nothing is typed by hand or duplicated.
+
+Generate the OAuth pair once outside the repository, base64-encode each file,
+and save the values only in Railway. The container materializes them under
+Drupal's private files directory on every start. Both variables must be present;
+the entrypoint never generates production keys implicitly.
 
 ## 4. Volume for uploaded files
 **app** service → **Volumes** → **+ New Volume** → mount path `/var/www/html/web/sites/default/files`.
@@ -63,7 +70,8 @@ Dockerfile as `app`:
 - **Start Command:** `drush cron`
 - **Cron Schedule:** `*/5 * * * *`
 - `DB_*` variables reference `${{MySQL.*}}`; `DRUPAL_*` variables reference the
-  matching `${{app.*}}` values, so no secrets are duplicated.
+  matching `${{app.*}}` values. The two `SIMPLE_OAUTH_*_B64` variables also
+  reference their matching `app` values, so no secrets are duplicated.
 - No public networking and no volume.
 
 Railway builds the image once and creates a short-lived execution at each schedule

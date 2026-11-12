@@ -45,4 +45,5 @@ web_environment: []
 # Provision the two demo clients idempotently after DDEV is ready.
 hooks:
   post-start:
+    - exec: "bash /mnt/ddev_config/commands/web/oauth-keys"
     - exec: "bash /mnt/ddev_config/commands/web/demo-sites"
