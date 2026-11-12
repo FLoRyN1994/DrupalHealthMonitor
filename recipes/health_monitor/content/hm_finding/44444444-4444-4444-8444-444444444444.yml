@@ -1,0 +1,23 @@
+_meta:
+  version: '1.0'
+  entity_type: hm_finding
+  uuid: 44444444-4444-4444-8444-444444444444
+  depends:
+    d7d66f13-0173-4dcf-8d9a-a2a86e95bf21: hm_site
+default:
+  site:
+    - entity: d7d66f13-0173-4dcf-8d9a-a2a86e95bf21
+  project_name:
+    - value: webform
+  type:
+    - value: security
+  severity:
+    - value: high
+  source:
+    - value: release_data
+  current_version:
+    - value: 6.2.7
+  recommended_version:
+    - value: 6.2.9
+  resolved:
+    - value: false
