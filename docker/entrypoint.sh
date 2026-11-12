@@ -5,10 +5,21 @@
 set -e
 
 files_dir=/var/www/html/web/sites/default/files
+oauth_key_dir=/var/www/html/web/sites/default/private/simple_oauth
 
 # Railway volumes are mounted as root; Drupal (www-data) must be able to write.
 mkdir -p "$files_dir"
 chown -R www-data:www-data "$files_dir" 2>/dev/null || true
+
+# Materialize OAuth signing keys from base64 environment variables into the
+# image's private site directory. The private key never enters config or Git.
+if [ -n "${SIMPLE_OAUTH_PRIVATE_KEY_B64:-}" ] && [ -n "${SIMPLE_OAUTH_PUBLIC_KEY_B64:-}" ]; then
+  mkdir -p "$oauth_key_dir"
+  umask 077
+  printf '%s' "$SIMPLE_OAUTH_PRIVATE_KEY_B64" | base64 -d > "$oauth_key_dir/private.key"
+  printf '%s' "$SIMPLE_OAUTH_PUBLIC_KEY_B64" | base64 -d > "$oauth_key_dir/public.key"
+  chown -R www-data:www-data "$oauth_key_dir"
+fi
 
 if [ "$1" = "web" ]; then
   # Debian's nginx package re-creates this symlink via a dpkg trigger during

@@ -1,0 +1,16 @@
+uuid: 93bb8a53-f05a-4bab-b255-7a5d73ed9958
+langcode: en
+status: true
+dependencies: {  }
+id: health_monitor_mcp
+name: 'health_monitor:mcp'
+description: 'Use the Drupal Health Monitor MCP server.'
+grant_types:
+  client_credentials:
+    status: true
+    description: 'Machine access to Health Monitor MCP tools'
+umbrella: false
+parent: null
+granularity_id: permission
+granularity_configuration:
+  permission: 'use mcp server'

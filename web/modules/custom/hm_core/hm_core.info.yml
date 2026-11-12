@@ -9,3 +9,4 @@ dependencies:
   - drupal:options
   - drupal:views
   - key:key
+  - mcp:mcp

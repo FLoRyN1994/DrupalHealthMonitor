@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+## Description: Generate local Simple OAuth signing keys when absent
+## Usage: oauth-keys
+## Example: ddev oauth-keys
+
+set -eu -o pipefail
+
+key_directory=/var/www/html/web/sites/default/private/simple_oauth
+private_key="${key_directory}/private.key"
+public_key="${key_directory}/public.key"
+
+if [[ -s "${private_key}" && -s "${public_key}" ]]; then
+  exit 0
+fi
+
+mkdir -p "${key_directory}"
+umask 077
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out "${private_key}" 2>/dev/null
+openssl pkey -in "${private_key}" -pubout -out "${public_key}" 2>/dev/null
+printf 'Generated local Simple OAuth keys in %s\n' "${key_directory}"

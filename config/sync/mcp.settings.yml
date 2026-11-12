@@ -1,0 +1,32 @@
+_core:
+  default_config_hash: G1fP_Viz2F-TkFxY_7EWluwPcwl7bL3ZziTHtxYS4Tk
+enable_auth: false
+auth_settings: {  }
+plugins:
+  general:
+    enabled: false
+    config: {  }
+  aif:
+    enabled: false
+  tools:
+    enabled: false
+  aia:
+    enabled: false
+  drush:
+    enabled: false
+  jsonapi:
+    enabled: false
+  content:
+    enabled: false
+  list:
+    enabled: true
+    roles:
+      - mcp_client
+  get:
+    enabled: true
+    roles:
+      - mcp_client
+  generate:
+    enabled: true
+    roles:
+      - mcp_client
