@@ -42,8 +42,11 @@ COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh scripts/*.sh \
  && find web -type d -exec chmod 755 {} + \
  && find web -type f -exec chmod 644 {} + \
- && mkdir -p web/sites/default/files \
- && chown -R www-data:www-data web/sites/default/files
+ && mkdir -p web/sites/default/files web/sites/default/private \
+ && php -r 'require "/var/www/html/vendor/autoload.php"; if (file_put_contents("/var/www/html/web/sites/default/private/.htaccess", \Drupal\Component\FileSecurity\FileSecurity::htaccessLines()) === false || !chmod("/var/www/html/web/sites/default/private/.htaccess", 0444)) { exit(1); }' \
+ && chown -R www-data:www-data web/sites/default/files web/sites/default/private \
+ && chmod 700 web/sites/default/private \
+ && chmod 444 web/sites/default/private/.htaccess
 
 ENV PATH="/var/www/html/vendor/bin:${PATH}" \
     PORT=8080

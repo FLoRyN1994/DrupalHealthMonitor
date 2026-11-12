@@ -60,6 +60,15 @@ Update this file at the end of every session (see AGENTS.md).
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
+- 2026-11-12, Codex — Production app and manual production cron both resolve
+  and validate the canonical private `.htaccess`, but Railway's scheduled cron
+  runtime still warns before its startup-created file is visible. The final
+  follow-up on `fix/private-htaccess-image` bakes the same core-generated file
+  into the immutable image after permission normalization, while retaining the
+  entrypoint check. A local production image contains the directory as `0700`
+  and the canonical file as `0444`, both owned by `www-data`; the full quality
+  gate passes. Next: pass CI, deploy, and inspect the next scheduled log.
+
 - 2026-11-12, Codex — The MCP compatibility hotfix deployed successfully and
   eliminated the scheduled cron service exception. Its first run showed the
   remaining private-file warning still occurs despite correct `0700
