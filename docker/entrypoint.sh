@@ -5,11 +5,17 @@
 set -e
 
 files_dir=/var/www/html/web/sites/default/files
-oauth_key_dir=/var/www/html/web/sites/default/private/simple_oauth
+private_dir=/var/www/html/web/sites/default/private
+oauth_key_dir="$private_dir/simple_oauth"
 
 # Railway volumes are mounted as root; Drupal (www-data) must be able to write.
 mkdir -p "$files_dir"
 chown -R www-data:www-data "$files_dir" 2>/dev/null || true
+
+# Drupal must be able to create private:// protection files as www-data.
+mkdir -p "$private_dir"
+chown www-data:www-data "$private_dir" 2>/dev/null || true
+chmod 700 "$private_dir" 2>/dev/null || true
 
 # Materialize OAuth signing keys from base64 environment variables into the
 # image's private site directory. The private key never enters config or Git.
