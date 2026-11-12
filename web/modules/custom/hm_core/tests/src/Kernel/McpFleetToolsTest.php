@@ -8,6 +8,7 @@ use Drupal\hm_core\Entity\Client;
 use Drupal\hm_core\Entity\Finding;
 use Drupal\hm_core\Entity\Site;
 use Drupal\hm_core\Mcp\FleetToolService;
+use Drupal\hm_core\Mcp\McpClientMessageStorageCompatibility;
 use Drupal\hm_core\Report\GeneratedReport;
 use Drupal\hm_core\Report\ReportTextGeneratorInterface;
 use Drupal\hm_core\Report\SiteReportContext;
@@ -74,6 +75,10 @@ final class McpFleetToolsTest extends KernelTestBase {
    * Tests deterministic fleet data, exact tool names, and report generation.
    */
   public function testFleetTools(): void {
+    $mcpMessageStorage = $this->container->get('mcp.client_message.storage');
+    self::assertInstanceOf(McpClientMessageStorageCompatibility::class, $mcpMessageStorage);
+    $mcpMessageStorage->cleanup();
+
     $client = Client::create([
       'name' => 'Example client',
       'contact_email' => 'owner@example.com',
