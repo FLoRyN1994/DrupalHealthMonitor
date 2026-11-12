@@ -55,10 +55,24 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] AI module + Anthropic provider; client report, release digest, D12 advice
 - [x] MCP module tools: list_sites, get_site_findings, get_security_updates, generate_site_report
 - [x] Install recipe `recipes/health_monitor` with demo content
-- [ ] README demo GIF + MCP demo
+- [x] README demo GIF + MCP demo
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-12, Codex — Completed the final M6 task and the full MVP on
+  `feat/m6-readme-demo`. The README now presents the deployed product, an
+  animated GIF captured from the authenticated production dashboard, accurate
+  fresh-install and repeatable-recipe steps, the architecture and security
+  boundaries, a complete OAuth client-credentials MCP walkthrough, the four
+  least-privilege tools, a grounded demo answer, and the post-MVP roadmap. A
+  clean-clone DDEV start now defers demo provisioning until Composer is present.
+  The recipe reapplies successfully, both signed local agents provision, and a
+  real temporary OAuth client returned exactly the four documented MCP tools;
+  its credentials were removed afterward. Composer validation/audit, PHPCS (92
+  files), PHPStan (74 files), and PHPUnit (51 tests, 287 assertions) pass. The
+  seven deprecations remain upstream in AI/JSON-RPC. All blueprint milestones
+  are complete; next work is optional stretch goals.
 
 - 2026-11-12, Codex — Completed the M6 install recipe on
   `feat/m6-install-recipe`. `recipes/health_monitor` installs the dashboard
