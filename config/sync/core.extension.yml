@@ -4,18 +4,24 @@ module:
   ai: 0
   ai_provider_anthropic: 0
   block: 0
+  consumers: 0
   dblog: 0
   dynamic_page_cache: 0
   field: 0
   file: 0
   filter: 0
   hm_core: 0
+  image: 0
+  jsonrpc: 0
   key: 0
+  mcp: 0
   mysql: 0
   node: 0
   options: 0
   page_cache: 0
   path_alias: 0
+  serialization: 0
+  simple_oauth: 0
   system: 0
   text: 0
   update: 0

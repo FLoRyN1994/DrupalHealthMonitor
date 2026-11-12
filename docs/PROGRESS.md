@@ -53,12 +53,26 @@ Update this file at the end of every session (see AGENTS.md).
 
 ## M6 — AI and MCP
 - [x] AI module + Anthropic provider; client report, release digest, D12 advice
-- [ ] MCP module tools: list_sites, get_site_findings, get_security_updates, generate_site_report
+- [x] MCP module tools: list_sites, get_site_findings, get_security_updates, generate_site_report
 - [ ] Install recipe `recipes/health_monitor` with demo content
 - [ ] README demo GIF + MCP demo
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-12, Codex — Completed M6's MCP task on `feat/m6-mcp-tools`.
+  Installed stable MCP 1.2.3 and security-fixed Simple OAuth 6.1.4, exposed
+  exactly `list_sites`, `get_site_findings`, `get_security_updates`, and
+  `generate_site_report`, and disabled the broad contributed tool groups.
+  Read operations return deterministic health, findings, and effort data;
+  report generation reuses the versioned AI-report service. Access requires
+  the dedicated `mcp_client` role and exported `health_monitor:mcp` OAuth
+  permission scope. Local and production signing keys are generated/injected
+  outside Git. A real client-credentials token successfully listed the exact
+  four tools; an unauthenticated request returned 401. Composer validation and
+  audit, PHPCS, PHPStan, and all 50 tests/263 assertions pass. Seven
+  deprecations are upstream in AI and JSON-RPC. Next: build the install recipe
+  with demo content; then finish the README, MCP client setup/demo, and GIF.
 
 - 2026-11-11, Codex — Production incident while deploying the AI-report merge:
   `railway up` preserved local macOS checkout modes (Drupal files 0600 and

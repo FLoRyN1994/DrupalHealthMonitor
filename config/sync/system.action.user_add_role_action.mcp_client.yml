@@ -1,0 +1,14 @@
+uuid: 229b85d3-b294-4b09-8d63-4f6deb521123
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.mcp_client
+  module:
+    - user
+id: user_add_role_action.mcp_client
+label: 'Add the MCP Client role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: mcp_client

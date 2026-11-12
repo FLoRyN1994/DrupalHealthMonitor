@@ -1,0 +1,12 @@
+uuid: 8b5c7aa4-59f2-4f4a-acf1-b39e4113aee6
+langcode: en
+status: true
+dependencies:
+  module:
+    - mcp
+id: mcp_client
+label: 'MCP Client'
+weight: 2
+is_admin: false
+permissions:
+  - 'use mcp server'

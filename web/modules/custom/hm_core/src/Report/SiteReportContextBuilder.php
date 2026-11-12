@@ -50,7 +50,7 @@ final class SiteReportContextBuilder {
         currentVersion: (string) ($finding->get('current_version')->value ?? ''),
         recommendedVersion: (string) ($finding->get('recommended_version')->value ?? ''),
       );
-      $effortHours += $this->findingEffort($type, $severity);
+      $effortHours += $this->estimateFindingEffort($type, $severity);
     }
 
     return new SiteReportContext(
@@ -66,7 +66,7 @@ final class SiteReportContextBuilder {
   /**
    * Calculates deterministic effort for one finding.
    */
-  private function findingEffort(string $type, string $severity): float {
+  public function estimateFindingEffort(string $type, string $severity): float {
     $baseHours = match ($type) {
       'security' => 2.0,
       'unsupported' => 3.0,
