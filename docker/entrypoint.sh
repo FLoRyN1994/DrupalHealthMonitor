@@ -6,6 +6,7 @@ set -e
 
 files_dir=/var/www/html/web/sites/default/files
 private_dir=/var/www/html/web/sites/default/private
+private_htaccess="$private_dir/.htaccess"
 oauth_key_dir="$private_dir/simple_oauth"
 
 # Railway volumes are mounted as root; Drupal (www-data) must be able to write.
@@ -16,6 +17,13 @@ chown -R www-data:www-data "$files_dir" 2>/dev/null || true
 mkdir -p "$private_dir"
 chown www-data:www-data "$private_dir" 2>/dev/null || true
 chmod 700 "$private_dir" 2>/dev/null || true
+
+# Create Drupal's canonical deny-all rules before any process bootstraps. The
+# cron runtime cannot reliably create this file itself on Railway's image layer.
+if [ ! -f "$private_htaccess" ]; then
+  php -r 'require "/var/www/html/vendor/autoload.php"; if (file_put_contents("/var/www/html/web/sites/default/private/.htaccess", \Drupal\Component\FileSecurity\FileSecurity::htaccessLines()) === false || !chmod("/var/www/html/web/sites/default/private/.htaccess", 0444)) { exit(1); }'
+  chown www-data:www-data "$private_htaccess" 2>/dev/null || true
+fi
 
 # Materialize OAuth signing keys from base64 environment variables into the
 # image's private site directory. The private key never enters config or Git.
