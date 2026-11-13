@@ -1,5 +1,6 @@
 {% set tone = score >= 90 ? 'healthy' : (score >= 70 ? 'attention' : 'critical') %}
-<span{{ attributes.addClass('health-badge', 'health-badge--' ~ tone).setAttribute('aria-label', (label|default('Health score')) ~ ': ' ~ score ~ ' out of 100') }}>
+<span{{ attributes.addClass('health-badge', 'health-badge--' ~ tone).setAttribute('style', '--hm-score: ' ~ score ~ '%').setAttribute('aria-label', (label|default('Health score')) ~ ': ' ~ score ~ ' out of 100') }}>
+  <span class="health-badge__ring" aria-hidden="true"></span>
   <span class="health-badge__score">{{ score }}</span>
-  <span class="health-badge__total" aria-hidden="true">/100</span>
+  <span class="health-badge__total" aria-hidden="true">health</span>
 </span>

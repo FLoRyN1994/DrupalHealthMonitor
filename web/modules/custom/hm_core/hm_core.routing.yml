@@ -1,3 +1,12 @@
+hm_core.landing:
+  path: '/health-monitor'
+  defaults:
+    _controller: '\Drupal\hm_core\Controller\LandingPageController::build'
+    _title: 'Drupal fleet health, without the spreadsheet'
+  requirements:
+    # This product overview is intentionally available to anonymous visitors.
+    _access: 'TRUE'
+
 hm_core.dashboard:
   path: '/admin/health-monitor/dashboard'
   defaults:

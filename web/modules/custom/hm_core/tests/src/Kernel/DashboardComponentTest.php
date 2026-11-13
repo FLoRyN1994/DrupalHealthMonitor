@@ -27,6 +27,16 @@ final class DashboardComponentTest extends ComponentKernelTestBase {
   public function testDashboardComponentsRender(): void {
     $build = [
       '#type' => 'container',
+      'summary' => [
+        '#type' => 'component',
+        '#component' => 'hm_theme:fleet-summary',
+        '#props' => [
+          'site_count' => 2,
+          'average_health' => 84,
+          'open_findings' => 1,
+          'urgent_findings' => 1,
+        ],
+      ],
       'site' => [
         '#type' => 'component',
         '#component' => 'hm_theme:site-card',
@@ -64,13 +74,17 @@ final class DashboardComponentTest extends ComponentKernelTestBase {
     $crawler = $this->renderComponentRenderArray($build, $metadata);
 
     self::assertCount(1, $crawler->filter('.site-card'));
+    self::assertCount(4, $crawler->filter('.fleet-summary__item'));
+    self::assertSame('84/100', str_replace(' ', '', $crawler->filter('.fleet-summary__item--score strong')->text()));
     self::assertSame('Example Production', $crawler->filter('.site-card__title')->text());
-    self::assertSame('84/100', str_replace(' ', '', $crawler->filter('.health-badge')->text()));
+    self::assertSame('84health', str_replace(' ', '', $crawler->filter('.health-badge')->text()));
+    self::assertSame('Health score: 84 out of 100', $crawler->filter('.health-badge')->attr('aria-label'));
     self::assertSame('1 open finding', trim($crawler->filter('.site-card__finding-count')->text()));
     self::assertSame('Drupal core', $crawler->filter('.findings-table tbody td')->eq(0)->text());
     self::assertSame('critical', $crawler->filter('.findings-table__severity--critical')->text());
 
     $libraries = $metadata->getAttachments()['library'] ?? [];
+    self::assertContains('core/components.hm_theme--fleet-summary', $libraries);
     self::assertContains('core/components.hm_theme--health-badge', $libraries);
     self::assertContains('core/components.hm_theme--site-card', $libraries);
     self::assertContains('core/components.hm_theme--findings-table', $libraries);

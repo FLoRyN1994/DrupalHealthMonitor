@@ -1,0 +1,85 @@
+{# Public product presentation for Drupal Health Monitor. #}
+<div class="hm-landing">
+  <header class="hm-landing-nav">
+    <div class="hm-landing-container hm-landing-nav__inner">
+      <a class="hm-brand hm-brand--light" href="{{ path('<front>') }}" rel="home" aria-label="Drupal Health Monitor home">
+        <span class="hm-brand__mark" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M18 2.5 31 8v9.1c0 8-5.2 13.8-13 16.4C10.2 30.9 5 25.1 5 17.1V8l13-5.5Z"/><path d="m10 19 4-4 3 3 5-7 4 4"/></svg></span>
+        <span class="hm-brand__text"><strong>Health Monitor</strong><small>for Drupal fleets</small></span>
+      </a>
+      <nav class="hm-landing-nav__links" aria-label="Main navigation">
+        <a href="#capabilities">Scope</a><a href="#workflow">How it works</a><a href="#onboarding">Register a site</a><a href="#security">Security</a>
+      </nav>
+      <a class="hm-button hm-button--small hm-button--light" href="{{ logged_in ? path('hm_core.dashboard') : path('user.login') }}">{{ logged_in ? 'Open dashboard' : 'Sign in' }}</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hm-hero">
+      <div class="hm-landing-container hm-hero__grid">
+        <div class="hm-hero__copy">
+          <p class="hm-eyebrow hm-eyebrow--cyan"><span></span> Built for Drupal maintenance retainers</p>
+          <h1>See every risk across your Drupal fleet. <em>Before your clients do.</em></h1>
+          <p class="hm-hero__lead">One operational view for security updates, unsupported modules, Drupal 12 blockers, uptime, and the maintenance hours behind them.</p>
+          <div class="hm-hero__actions">
+            <a class="hm-button hm-button--large hm-button--cyan" href="{{ logged_in ? path('hm_core.dashboard') : path('user.login') }}">{{ logged_in ? 'View fleet health' : 'Sign in to dashboard' }} <span aria-hidden="true">→</span></a>
+            <a class="hm-text-link hm-text-link--light" href="#onboarding">See how sites connect <span aria-hidden="true">↓</span></a>
+          </div>
+          <ul class="hm-hero__proof" aria-label="Product principles"><li><span aria-hidden="true">✓</span> No automatic updates</li><li><span aria-hidden="true">✓</span> Evidence-first analysis</li><li><span aria-hidden="true">✓</span> Secrets stay outside Git</li></ul>
+        </div>
+
+        <div class="hm-product-preview" aria-label="Illustrative dashboard preview">
+          <div class="hm-product-preview__bar"><span></span><span></span><span></span><p>Fleet overview</p><b>Live</b></div>
+          <div class="hm-product-preview__body">
+            <div class="hm-product-preview__summary"><div><small>Fleet score</small><strong>55</strong><span>/100</span></div><div><small>Security work</small><strong>2</strong><span>updates</span></div><div><small>Estimated effort</small><strong>5.5</strong><span>hours</span></div></div>
+            <div class="hm-product-preview__cards">
+              <article><div><span class="hm-demo-dot hm-demo-dot--red"></span><small>PRODUCTION</small></div><h2>Acme Production</h2><p>Critical security update</p><div class="hm-demo-score"><span style="--score: 45">45</span><small>3 open findings</small></div></article>
+              <article><div><span class="hm-demo-dot hm-demo-dot--amber"></span><small>STAGING</small></div><h2>Beacon Staging</h2><p>D12 readiness attention</p><div class="hm-demo-score"><span style="--score: 65">65</span><small>2 open findings</small></div></article>
+            </div>
+            <div class="hm-product-preview__queue"><div><span class="hm-icon-box hm-icon-box--red">!</span><p><strong>Token</strong><small>Security update · 1.15 → 1.17</small></p><b>3h</b></div><div><span class="hm-icon-box hm-icon-box--amber">12</span><p><strong>Webform</strong><small>Compatibility review required</small></p><b>2.5h</b></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="hm-hero__glow" aria-hidden="true"></div>
+    </section>
+
+    <section class="hm-principles" aria-label="Platform principles"><div class="hm-landing-container hm-principles__grid"><div><span>01</span><p><strong>Deterministic detection</strong><small>PHP rules create every finding and effort estimate.</small></p></div><div><span>02</span><p><strong>Signed collection</strong><small>HMAC-authenticated agents expose no public data.</small></p></div><div><span>03</span><p><strong>AI with boundaries</strong><small>Models explain verified evidence; they never invent it.</small></p></div></div></section>
+
+    <section class="hm-section" id="capabilities">
+      <div class="hm-landing-container">
+        <div class="hm-section-heading"><div><p class="hm-eyebrow"><span></span> One fleet, one source of truth</p><h2>The maintenance picture, without the spreadsheet archaeology.</h2></div><p>Health Monitor turns each client site's status into prioritized, explainable work—so agencies can plan the week and talk to clients with confidence.</p></div>
+        <div class="hm-capability-grid">
+          <article class="hm-capability hm-capability--feature"><div class="hm-capability__icon">⌁</div><p class="hm-capability__number">01</p><h3>Fleet health at a glance</h3><p>A comparable score across every environment, weighted toward security, support status, Drupal 12 readiness, and recent uptime.</p><div class="hm-mini-health"><span><i style="--width: 45%"></i></span><b>45</b><small>Critical</small><span><i style="--width: 82%"></i></span><b>82</b><small>Attention</small><span><i style="--width: 96%"></i></span><b>96</b><small>Healthy</small></div></article>
+          <article class="hm-capability"><div class="hm-capability__icon">✦</div><p class="hm-capability__number">02</p><h3>Security and release intelligence</h3><p>Drupal.org release metadata becomes deduplicated security, regular update, and unsupported-project findings.</p><ul><li>Security advisories</li><li>Recommended versions</li><li>Evidence source</li></ul></article>
+          <article class="hm-capability"><div class="hm-capability__icon">12</div><p class="hm-capability__number">03</p><h3>Drupal 12 readiness</h3><p>Compatibility metadata, deprecated core modules, and optional Upgrade Status scans surface blockers early.</p><ul><li>Contrib compatibility</li><li>Local code scan evidence</li><li>Conservative reconciliation</li></ul></article>
+          <article class="hm-capability"><div class="hm-capability__icon">↗</div><p class="hm-capability__number">04</p><h3>Uptime with context</h3><p>The signed collection request doubles as the uptime probe, connecting availability with the exact snapshot received.</p><ul><li>HTTP status and latency</li><li>Latest 12-check window</li><li>Queue-backed collection</li></ul></article>
+          <article class="hm-capability"><div class="hm-capability__icon">Aa</div><p class="hm-capability__number">05</p><h3>Client-ready reports</h3><p>Generate versioned, email-ready explanations from current findings with deterministic effort totals attached.</p><ul><li>Plain-English summary</li><li>Release-notes digest</li><li>D12 upgrade advice</li></ul></article>
+          <article class="hm-capability"><div class="hm-capability__icon">M</div><p class="hm-capability__number">06</p><h3>Ask your fleet via MCP</h3><p>Four least-privilege tools let an authenticated AI client query sites, findings, security work, and reports.</p><ul><li>OAuth client credentials</li><li>Read-only fleet tools</li><li>Grounded structured results</li></ul></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="hm-section hm-section--tint" id="workflow">
+      <div class="hm-landing-container">
+        <div class="hm-section-heading hm-section-heading--center"><div><p class="hm-eyebrow"><span></span> How it works</p><h2>From signed snapshot to prioritized work.</h2></div><p>Collection, analysis, presentation, and explanation stay separate—so every conclusion can be traced back to evidence.</p></div>
+        <ol class="hm-workflow"><li><span>1</span><div class="hm-workflow__icon">◇</div><h3>Collect</h3><p>The lightweight agent returns core, PHP, module, database-update, and Upgrade Status data through a signed endpoint.</p><small>HMAC + 5-minute window</small></li><li><span>2</span><div class="hm-workflow__icon">⌘</div><h3>Analyze</h3><p>Deterministic services compare releases, reconcile findings, score health, and preserve evidence during upstream outages.</p><small>Plain PHP + unit tests</small></li><li><span>3</span><div class="hm-workflow__icon">▦</div><h3>Prioritize</h3><p>The dashboard groups work by site, severity, environment, health band, and deterministic maintenance effort.</p><small>HTMX + live entities</small></li><li><span>4</span><div class="hm-workflow__icon">✦</div><h3>Explain</h3><p>AI writes the client-facing summary from supplied JSON evidence, while MCP answers fleet questions from the same services.</p><small>Auditable and versioned</small></li></ol>
+      </div>
+    </section>
+
+    <section class="hm-section" id="onboarding">
+      <div class="hm-landing-container hm-onboarding">
+        <div class="hm-onboarding__intro"><p class="hm-eyebrow"><span></span> Register a Drupal site</p><h2>Four steps from client site to live fleet data.</h2><p>The monitor never needs administrator credentials for a client site. It receives a bounded status payload through the core-only agent module.</p><a class="hm-text-link" href="https://github.com/FLoRyN1994/DrupalHealthMonitor" rel="noopener noreferrer">View installation source on GitHub <span aria-hidden="true">↗</span></a></div>
+        <ol class="hm-onboarding__steps"><li><span>01</span><div><h3>Install the agent</h3><p>Place <code>hm_agent</code> on the client Drupal site and enable it. It supports Drupal 10.3 and 11 with core-only dependencies.</p></div></li><li><span>02</span><div><h3>Create the shared secret</h3><p>Generate a random secret and expose it to Drupal through environment-specific settings—never exported configuration or Git.</p><code>$settings['hm_agent_secret'] = getenv('HM_AGENT_SECRET');</code></div></li><li><span>03</span><div><h3>Add client and site</h3><p>In the monitor, create the client, add its site URL and environment, then select the matching Key record.</p><div class="hm-onboarding__links">{% if logged_in %}<a href="{{ path('entity.hm_client.add_form') }}">Add client</a><a href="{{ path('entity.hm_site.add_form') }}">Add site</a>{% else %}<a href="{{ path('user.login') }}">Sign in to register</a>{% endif %}</div></div></li><li><span>04</span><div><h3>Let cron collect</h3><p>Scheduled queue workers sign the request, validate the response, store the snapshot, analyze releases, and update the health score.</p></div></li></ol>
+      </div>
+    </section>
+
+    <section class="hm-security" id="security"><div class="hm-landing-container hm-security__grid"><div><p class="hm-eyebrow hm-eyebrow--cyan"><span></span> Deliberately constrained</p><h2>Operational visibility without handing over the keys.</h2><p>The agent is read-only. The monitor does not apply updates, execute remote commands, or expose secrets in configuration.</p><div class="hm-security__checks"><p><span>✓</span> Timestamped HMAC signatures</p><p><span>✓</span> Secret values managed by Key</p><p><span>✓</span> OAuth-scoped MCP access</p><p><span>✓</span> Evidence-conservative finding lifecycle</p></div></div><div class="hm-security__diagram" aria-label="Security boundary diagram"><div class="hm-security-node"><span>Client site</span><strong>hm_agent</strong><small>Read-only status</small></div><div class="hm-security-flow"><span>HMAC-SHA256</span><i></i><small>timestamp + path</small></div><div class="hm-security-node hm-security-node--monitor"><span>Monitor</span><strong>Queue + analyzer</strong><small>Validated payload</small></div><div class="hm-security__boundary">No passwords · No remote commands · No automatic updates</div></div></div></section>
+
+    <section class="hm-section hm-section--mcp"><div class="hm-landing-container hm-mcp-demo"><div class="hm-mcp-demo__copy"><p class="hm-eyebrow"><span></span> MCP fleet queries</p><h2>Ask the maintenance question in plain English.</h2><p>The answer comes from structured Drupal entities and deterministic effort rules—not a model's memory.</p><div class="hm-tool-list"><code>list_sites</code><code>get_site_findings</code><code>get_security_updates</code><code>generate_site_report</code></div></div><div class="hm-conversation"><div class="hm-conversation__user"><small>You</small><p>Which client sites need security updates this week, and how many hours in total?</p></div><div class="hm-conversation__assistant"><small><span>✦</span> Fleet assistant</small><p><strong>Acme Production</strong> and <strong>Beacon Staging</strong> need security work.</p><ul><li>2 security updates</li><li>5.5 estimated hours total</li></ul><div>Grounded in <code>get_security_updates</code></div></div></div></div></section>
+
+    <section class="hm-scope"><div class="hm-landing-container hm-scope__grid"><div><p class="hm-eyebrow hm-eyebrow--cyan"><span></span> Clear product boundary</p><h2>A decision surface, not an autopilot.</h2></div><div class="hm-scope__columns"><article><h3><span>✓</span> What it does</h3><ul><li>Registers clients and Drupal environments</li><li>Collects signed operational snapshots</li><li>Flags update, support, D12, and uptime risks</li><li>Estimates and explains maintenance work</li></ul></article><article><h3><span>—</span> What it intentionally does not do</h3><ul><li>Apply updates automatically</li><li>Store client administrator passwords</li><li>Replace human release planning</li><li>Invent findings with generative AI</li></ul></article></div></div></section>
+
+    <section class="hm-final-cta"><div class="hm-landing-container hm-final-cta__inner"><div><p class="hm-eyebrow hm-eyebrow--cyan"><span></span> Your fleet, made legible</p><h2>Turn scattered maintenance signals into a weekly plan.</h2></div><a class="hm-button hm-button--large hm-button--cyan" href="{{ logged_in ? path('hm_core.dashboard') : path('user.login') }}">{{ logged_in ? 'Open fleet overview' : 'Sign in to the monitor' }} <span aria-hidden="true">→</span></a></div></section>
+  </main>
+
+  <footer class="hm-landing-footer"><div class="hm-landing-container hm-landing-footer__inner"><a class="hm-brand hm-brand--light" href="{{ path('<front>') }}"><span class="hm-brand__mark" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M18 2.5 31 8v9.1c0 8-5.2 13.8-13 16.4C10.2 30.9 5 25.1 5 17.1V8l13-5.5Z"/><path d="m10 19 4-4 3 3 5-7 4 4"/></svg></span><span class="hm-brand__text"><strong>Health Monitor</strong><small>for Drupal fleets</small></span></a><p>Open-source portfolio project built with Drupal 11, HTMX, AI, and MCP.</p><div><a href="https://github.com/FLoRyN1994/DrupalHealthMonitor" rel="noopener noreferrer">GitHub</a><a href="#capabilities">Scope</a><a href="#onboarding">Setup</a></div></div></footer>
+</div>
