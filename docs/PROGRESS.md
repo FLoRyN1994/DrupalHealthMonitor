@@ -61,13 +61,13 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Public product landing page with scope, workflow, registration steps, security, and calls to action
 - [x] Cohesive responsive theme for navigation, forms, entity pages, and authentication
 - [x] Redesigned fleet dashboard, site cards, health indicators, filters, and findings table
-- [~] Accessibility, visual regression, full quality gate, and production deployment
+- [x] Accessibility, visual regression, full quality gate, and production deployment
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
-- 2026-11-13, Codex — Completed the implementation and local verification for
-  M7 on `feat/site-redesign`. `/health-monitor` is now a public product
+- 2026-11-13, Codex — Completed and deployed M7 through PR #11.
+  `/health-monitor` is now a public product
   presentation covering real capabilities, the signed collection workflow,
   four-step site registration, security boundaries, MCP, and explicit product
   scope. The shared navy/cyan system now covers anonymous/authenticated
@@ -76,9 +76,15 @@ _Latest session first. Who, date, what's half-done, what's next, gotchas._
   mobile, and full-page browser captures were inspected; no external font or
   image dependency was introduced. Composer validation/audit, PHPCS (96
   files), PHPStan, and PHPUnit (51 tests, 298 assertions) pass; seven upstream
-  AI/JSON-RPC deprecations remain. Next: merge after CI, deploy app and cron to
-  Railway, and verify the public landing page plus authenticated dashboard in
-  production.
+  AI/JSON-RPC deprecations remain. Railway app deployment
+  `2a9c3a79-0b03-4032-bee7-f6a91d56c16b` and cron deployment
+  `c03d68e8-0a54-4829-af6d-4179aa2334bd` both succeeded. Production returns
+  200 for the landing page and sign-in, 403 for the anonymous dashboard, and
+  401 for anonymous MCP; a one-time authenticated request rendered the fleet
+  summary, Acme Production, and findings table. A verbose production cron run
+  completed all monitor, MCP, OAuth, system, and update hooks without warnings
+  or errors. M7 is complete; the next work should come from a new blueprint or
+  owner-requested enhancement.
 
 - 2026-11-12, Codex — Production app and manual production cron both resolve
   and validate the canonical private `.htaccess`, but Railway's scheduled cron
