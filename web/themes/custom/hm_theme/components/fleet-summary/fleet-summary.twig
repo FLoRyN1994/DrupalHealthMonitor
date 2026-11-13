@@ -1,0 +1,22 @@
+<section{{ attributes.addClass('fleet-summary').setAttribute('aria-label', 'Selected fleet summary') }}>
+  <article class="fleet-summary__item fleet-summary__item--score">
+    <div class="fleet-summary__icon" aria-hidden="true">⌁</div>
+    <div><span>Average health</span><strong>{{ average_health }}<small>/100</small></strong></div>
+    <i><b style="--hm-summary-score: {{ average_health }}%"></b></i>
+  </article>
+  <article class="fleet-summary__item">
+    <div class="fleet-summary__icon" aria-hidden="true">◇</div>
+    <div><span>Monitored sites</span><strong>{{ site_count }}</strong></div>
+    <small>in this view</small>
+  </article>
+  <article class="fleet-summary__item">
+    <div class="fleet-summary__icon fleet-summary__icon--amber" aria-hidden="true">!</div>
+    <div><span>Open findings</span><strong>{{ open_findings }}</strong></div>
+    <small>need review</small>
+  </article>
+  <article class="fleet-summary__item">
+    <div class="fleet-summary__icon fleet-summary__icon--red" aria-hidden="true">↑</div>
+    <div><span>Urgent findings</span><strong>{{ urgent_findings }}</strong></div>
+    <small>high or critical</small>
+  </article>
+</section>

@@ -55,6 +55,11 @@ final class DashboardControllerTest extends KernelTestBase {
    * Tests query filters, component props, and HTMX form attributes.
    */
   public function testFilteredDashboardBuild(): void {
+    $landingRoute = $this->container->get('router.route_provider')
+      ->getRouteByName('hm_core.landing');
+    self::assertSame('/health-monitor', $landingRoute->getPath());
+    self::assertSame('TRUE', $landingRoute->getRequirement('_access'));
+
     $client = Client::create([
       'name' => 'Example client',
       'contact_email' => 'owner@example.com',
@@ -102,6 +107,10 @@ final class DashboardControllerTest extends KernelTestBase {
     self::assertSame(82, $cards[0]['#props']['health_score']);
     self::assertSame(1, $cards[0]['#props']['open_findings']);
     self::assertSame('token', $build['results']['findings']['#props']['findings'][0]['project_name']);
+    self::assertSame(1, $build['summary']['#props']['site_count']);
+    self::assertSame(82, $build['summary']['#props']['average_health']);
+    self::assertSame(1, $build['summary']['#props']['open_findings']);
+    self::assertSame(0, $build['summary']['#props']['urgent_findings']);
 
     $formAttributes = $build['filters']['#attributes'];
     self::assertSame('#hm-dashboard-results', (string) $formAttributes['data-hx-target']);

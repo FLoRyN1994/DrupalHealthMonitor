@@ -57,8 +57,28 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Install recipe `recipes/health_monitor` with demo content
 - [x] README demo GIF + MCP demo
 
+## M7 — Product website and visual system
+- [x] Public product landing page with scope, workflow, registration steps, security, and calls to action
+- [x] Cohesive responsive theme for navigation, forms, entity pages, and authentication
+- [x] Redesigned fleet dashboard, site cards, health indicators, filters, and findings table
+- [~] Accessibility, visual regression, full quality gate, and production deployment
+
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-13, Codex — Completed the implementation and local verification for
+  M7 on `feat/site-redesign`. `/health-monitor` is now a public product
+  presentation covering real capabilities, the signed collection workflow,
+  four-step site registration, security boundaries, MCP, and explicit product
+  scope. The shared navy/cyan system now covers anonymous/authenticated
+  navigation, forms, tables, entity pages, authentication, and a redesigned
+  fleet dashboard with summary metrics and responsive SDCs. Desktop, 500px
+  mobile, and full-page browser captures were inspected; no external font or
+  image dependency was introduced. Composer validation/audit, PHPCS (96
+  files), PHPStan, and PHPUnit (51 tests, 298 assertions) pass; seven upstream
+  AI/JSON-RPC deprecations remain. Next: merge after CI, deploy app and cron to
+  Railway, and verify the public landing page plus authenticated dashboard in
+  production.
 
 - 2026-11-12, Codex — Production app and manual production cron both resolve
   and validate the canonical private `.htaccess`, but Railway's scheduled cron

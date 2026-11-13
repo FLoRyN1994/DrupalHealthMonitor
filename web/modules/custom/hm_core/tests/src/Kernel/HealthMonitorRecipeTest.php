@@ -71,7 +71,7 @@ final class HealthMonitorRecipeTest extends KernelTestBase {
     }
     self::assertTrue($this->container->get('theme_handler')->themeExists('hm_theme'));
     self::assertSame('hm_theme', $this->config('system.theme')->get('default'));
-    self::assertSame('/user/login', $this->config('system.site')->get('page.front'));
+    self::assertSame('/health-monitor', $this->config('system.site')->get('page.front'));
 
     self::assertNotNull(Block::load('hm_theme_content'));
     self::assertNotNull(View::load('hm_clients'));

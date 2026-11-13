@@ -1,24 +1,27 @@
 .hm-dashboard {
   display: grid;
-  gap: 2rem;
-  max-width: 90rem;
+  gap: 1.5rem;
 }
 
 .hm-dashboard__intro {
-  margin: 0;
-  color: #52606d;
-  font-size: 1rem;
-}
-
-.hm-dashboard__sites {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  display: flex;
   gap: 1rem;
+  align-items: baseline;
+  justify-content: space-between;
 }
 
-.hm-dashboard__results {
-  display: grid;
-  gap: 2rem;
+.hm-dashboard__intro p {
+  margin: 0;
+  color: #087f78;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hm-dashboard__intro span {
+  color: #71838e;
+  font-size: 0.85rem;
 }
 
 .hm-dashboard-filters {
@@ -26,34 +29,80 @@
   flex-wrap: wrap;
   gap: 1rem;
   align-items: end;
-  padding: 1rem;
-  border: 1px solid #d9e1e8;
-  border-radius: 0.75rem;
-  background: #f7f9fb;
+  padding: 1rem 1.15rem;
+  border: 1px solid #dce5e9;
+  border-radius: 0.9rem;
+  background: #fff;
+  box-shadow: 0 0.5rem 2rem rgb(7 23 38 / 5%);
 }
 
-.hm-dashboard-filters > .form-item {
-  min-width: 12rem;
+.hm-dashboard-filters .form-item {
+  min-width: 11rem;
   margin: 0;
 }
 
-.hm-dashboard-filters .form-actions {
-  display: flex;
-  gap: 0.5rem;
+.hm-dashboard-filters label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #667a87;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.hm-dashboard-filters select {
+  min-width: 11rem;
+  min-height: 2.55rem;
+  padding: 0.5rem 2rem 0.5rem 0.7rem;
+  border: 1px solid #cbd8dd;
+  border-radius: 0.5rem;
+  color: #173247;
+  background: #f9fbfb;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.hm-dashboard__results {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.hm-dashboard__sites {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.hm-dashboard__sites > p {
+  grid-column: 1 / -1;
   margin: 0;
+  padding: 2rem;
+  border: 1px dashed #c7d5da;
+  border-radius: 0.9rem;
+  color: #71838e;
+  background: #fff;
+  text-align: center;
 }
 
-.hm-dashboard-filters__loading {
-  align-self: center;
-  color: #52606d;
-  font-size: 0.875rem;
-}
-
-.hm-dashboard-filters.htmx-request .hm-dashboard-filters__loading {
-  display: inline-block;
-}
-
-#hm-dashboard-results.htmx-swapping {
+.htmx-request .hm-dashboard__results,
+.hm-dashboard__results.htmx-swapping {
   opacity: 0.55;
-  transition: opacity 150ms ease-in;
+  transition: opacity 150ms ease;
+}
+
+@media (max-width: 800px) {
+  .hm-dashboard__intro {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .hm-dashboard__sites {
+    grid-template-columns: 1fr;
+  }
+
+  .hm-dashboard-filters .form-item,
+  .hm-dashboard-filters select {
+    width: 100%;
+  }
 }

@@ -79,6 +79,7 @@ final class DashboardController implements ContainerInjectionInterface {
 
     $findingCounts = [];
     $findingRows = [];
+    $urgentFindingCount = 0;
     foreach ($findings as $finding) {
       if (!$finding instanceof Finding) {
         continue;
@@ -91,6 +92,9 @@ final class DashboardController implements ContainerInjectionInterface {
 
       $siteId = (int) $site->id();
       $findingCounts[$siteId] = ($findingCounts[$siteId] ?? 0) + 1;
+      if (in_array((string) $finding->get('severity')->value, ['critical', 'high'], TRUE)) {
+        $urgentFindingCount++;
+      }
       $findingRows[] = [
         'site_name' => (string) $site->label(),
         'site_url' => $site->toUrl()->toString(),
@@ -103,10 +107,13 @@ final class DashboardController implements ContainerInjectionInterface {
     }
 
     $siteCards = [];
+    $healthScoreTotal = 0;
     foreach ($sites as $site) {
       if (!$site instanceof Site) {
         continue;
       }
+
+      $healthScoreTotal += (int) $site->get('health_score')->value;
 
       $siteCard = [
         '#type' => 'component',
@@ -137,7 +144,17 @@ final class DashboardController implements ContainerInjectionInterface {
         'tags' => ['hm_site_list', 'hm_finding_list'],
       ],
       'intro' => [
-        '#markup' => '<p class="hm-dashboard__intro">Fleet health, open findings, and upgrade risks in one place.</p>',
+        '#markup' => '<div class="hm-dashboard__intro"><p>Fleet operations</p><span>Health, open findings, upgrade risks, and maintenance priorities in one place.</span></div>',
+      ],
+      'summary' => [
+        '#type' => 'component',
+        '#component' => 'hm_theme:fleet-summary',
+        '#props' => [
+          'site_count' => count($sites),
+          'average_health' => $sites === [] ? 0 : (int) round($healthScoreTotal / count($sites)),
+          'open_findings' => count($findings),
+          'urgent_findings' => $urgentFindingCount,
+        ],
       ],
       'filters' => $this->formBuilder->getForm(DashboardFilterForm::class),
       'results' => [
