@@ -1,0 +1,29 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
+
+name: Fleet summary
+status: stable
+description: Displays operational totals for the selected fleet view.
+props:
+  type: object
+  required:
+    - site_count
+    - average_health
+    - open_findings
+    - urgent_findings
+  properties:
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Attributes
+    site_count:
+      type: integer
+      minimum: 0
+    average_health:
+      type: integer
+      minimum: 0
+      maximum: 100
+    open_findings:
+      type: integer
+      minimum: 0
+    urgent_findings:
+      type: integer
+      minimum: 0

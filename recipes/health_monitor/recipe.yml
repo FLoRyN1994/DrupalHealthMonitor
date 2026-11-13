@@ -19,7 +19,7 @@ config:
     system.site:
       simpleConfigUpdate:
         name: 'Drupal Health Monitor'
-        page.front: /user/login
+        page.front: /health-monitor
     system.theme:
       simpleConfigUpdate:
         default: hm_theme

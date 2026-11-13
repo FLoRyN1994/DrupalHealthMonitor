@@ -1,36 +1,6 @@
-.health-badge {
-  display: inline-flex;
-  align-items: baseline;
-  min-width: 4.75rem;
-  padding: 0.35rem 0.65rem;
-  border: 1px solid currentColor;
-  border-radius: 999px;
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.health-badge--healthy {
-  color: #166534;
-  background: #dcfce7;
-}
-
-.health-badge--attention {
-  color: #92400e;
-  background: #fef3c7;
-}
-
-.health-badge--critical {
-  color: #991b1b;
-  background: #fee2e2;
-}
-
-.health-badge__score {
-  font-size: 1.25rem;
-}
-
-.health-badge__total {
-  font-size: 0.75rem;
-  font-weight: 600;
-  opacity: 0.75;
-}
+.health-badge { --hm-badge-color: #1b9d72; position: relative; display: grid; width: 4.5rem; height: 4.5rem; flex: 0 0 4.5rem; place-content: center; border-radius: 50%; color: #102838; background: radial-gradient(circle at center, #fff 58%, transparent 60%), conic-gradient(var(--hm-badge-color) var(--hm-score), #e5ecef 0); font-variant-numeric: tabular-nums; text-align: center; }
+.health-badge--attention { --hm-badge-color: #f2a93b; }
+.health-badge--critical { --hm-badge-color: #e54c58; }
+.health-badge__ring { position: absolute; inset: -.18rem; border: 1px solid color-mix(in srgb, var(--hm-badge-color) 25%, transparent); border-radius: 50%; }
+.health-badge__score { font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif; font-size: 1.15rem; font-weight: 800; line-height: 1; }
+.health-badge__total { margin-top: .2rem; color: #7d8d96; font-size: .52rem; font-weight: 800; letter-spacing: .08em; line-height: 1; text-transform: uppercase; }
