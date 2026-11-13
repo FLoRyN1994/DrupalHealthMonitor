@@ -17,11 +17,11 @@
           {% for finding in findings %}
             <tr>
               <th scope="row"><a href="{{ finding.site_url }}">{{ finding.site_name }}</a></th>
-              <td>{{ finding.project_name }}</td>
-              <td>{{ finding.type }}</td>
+              <td><span class="findings-table__project">{{ finding.project_name }}</span></td>
+              <td><span class="findings-table__type">{{ finding.type }}</span></td>
               <td><span class="findings-table__severity findings-table__severity--{{ finding.severity }}">{{ finding.severity }}</span></td>
-              <td>{{ finding.current_version ?: '—' }}</td>
-              <td>{{ finding.recommended_version ?: '—' }}</td>
+              <td><span class="findings-table__version">{{ finding.current_version ?: '—' }}</span></td>
+              <td><span class="findings-table__version">{{ finding.recommended_version ?: '—' }}</span></td>
             </tr>
           {% endfor %}
         </tbody>
