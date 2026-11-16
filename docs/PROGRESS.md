@@ -64,10 +64,28 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Accessibility, visual regression, full quality gate, and production deployment
 
 ## M8 — Account onboarding
-- [~] Public registration page with password setup, administrator approval, operator access, landing-page calls to action, testing, and production deployment
+- [x] Public registration page with password setup, administrator approval, operator access, landing-page calls to action, testing, and production deployment
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-16, Codex — Completed and deployed M8 through PR #13. The public
+  `/register` experience now collects email, username, and password, creates a
+  blocked account with the narrowly scoped `Health Monitor Operator` role, and
+  requires administrator activation before the account can access fleet data.
+  Registration notifications are disabled because production has no outbound
+  mail transport; the post-submit message accurately explains pending approval.
+  All public header, hero, onboarding, and final calls to action now expose
+  registration separately from sign-in. Desktop and 500px responsive renders
+  were inspected. A real local anonymous registration created a blocked
+  operator; after activation, that account rendered the fleet dashboard.
+  Composer validation/audit, PHPCS (96 files), PHPStan, and PHPUnit (52 tests,
+  312 assertions) pass; seven upstream AI/JSON-RPC deprecations remain.
+  Railway app deployment `f094d952-d849-4428-a14b-f2b5b49c42cc` and cron
+  deployment `629cfae5-1a9a-4641-974c-58a45eda4c33` succeeded. Production
+  `/register` returns 200 with the complete form, anonymous dashboard access
+  remains 403, the operator permission is present, and verbose cron completes
+  cleanly. M8 is complete.
 
 - 2026-11-13, Codex — Completed and deployed M7 through PR #11.
   `/health-monitor` is now a public product
