@@ -1,22 +1,23 @@
+uuid: 8fe4faee-3cd3-47fa-98a4-4d169aac4eea
 langcode: en
 status: true
 dependencies:
   config:
-    - system.menu.admin
+    - system.menu.health-monitor
   module:
     - system
   theme:
     - hm_theme
-id: hm_theme_admin
+id: hm_theme_health_monitor
 theme: hm_theme
 region: sidebar_first
-weight: 1
+weight: 0
 provider: null
-plugin: 'system_menu_block:admin'
+plugin: 'system_menu_block:health-monitor'
 settings:
-  id: 'system_menu_block:admin'
-  label: Administration
-  label_display: visible
+  id: 'system_menu_block:health-monitor'
+  label: 'Health Monitor'
+  label_display: '1'
   provider: system
   level: 1
   depth: null

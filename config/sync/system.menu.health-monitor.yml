@@ -1,0 +1,8 @@
+uuid: 7f09194e-a8eb-4135-87e7-abcb040f2291
+langcode: en
+status: true
+dependencies: {  }
+id: health-monitor
+label: 'Health Monitor'
+description: 'Health Monitor application navigation'
+locked: true
