@@ -1,24 +1,21 @@
-uuid: cbdde818-88c9-45fe-9424-430fefa5cc0f
 langcode: en
 status: true
 dependencies:
   config:
-    - system.menu.tools
+    - system.menu.health-monitor
   module:
     - system
   theme:
     - hm_theme
-_core:
-  default_config_hash: 21gTvrC3-X1nBOt2rLuxMV9LqgyW8pnzfKXMeq-dnPI
-id: hm_theme_tools
+id: hm_theme_health_monitor
 theme: hm_theme
 region: sidebar_first
 weight: 0
 provider: null
-plugin: 'system_menu_block:tools'
+plugin: 'system_menu_block:health-monitor'
 settings:
-  id: 'system_menu_block:tools'
-  label: Tools
+  id: 'system_menu_block:health-monitor'
+  label: 'Health Monitor'
   label_display: visible
   provider: system
   level: 1

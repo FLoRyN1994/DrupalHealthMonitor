@@ -34,3 +34,44 @@ hm_core.ai_reports:
   description: 'Review generated client maintenance reports.'
   route_name: entity.hm_ai_report.collection
   parent: system.admin_content
+
+hm_core.sidebar.dashboard:
+  title: 'Overview'
+  description: 'Review fleet health and open findings.'
+  route_name: hm_core.dashboard
+  menu_name: health-monitor
+  weight: -20
+
+hm_core.sidebar.sites:
+  title: 'Sites'
+  description: 'Manage monitored Drupal sites.'
+  route_name: view.hm_sites.page_1
+  menu_name: health-monitor
+  weight: -10
+
+hm_core.sidebar.clients:
+  title: 'Clients'
+  description: 'Manage clients whose sites are monitored.'
+  route_name: view.hm_clients.page_1
+  menu_name: health-monitor
+
+hm_core.sidebar.findings:
+  title: 'Findings'
+  description: 'Review analyzed site findings.'
+  route_name: entity.hm_finding.collection
+  menu_name: health-monitor
+  weight: 10
+
+hm_core.sidebar.snapshots:
+  title: 'Snapshots'
+  description: 'Review collected site snapshots.'
+  route_name: entity.hm_snapshot.collection
+  menu_name: health-monitor
+  weight: 20
+
+hm_core.sidebar.ai_reports:
+  title: 'AI reports'
+  description: 'Review generated client maintenance reports.'
+  route_name: entity.hm_ai_report.collection
+  menu_name: health-monitor
+  weight: 30

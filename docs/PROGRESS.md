@@ -69,6 +69,9 @@ Update this file at the end of every session (see AGENTS.md).
 ## M9 — Administration navigation
 - [x] Install Admin Toolbar and Admin Toolbar Extra Tools, include them in repeatable configuration, test, and deploy to production
 
+## M10 — Focused application sidebar
+- [~] Replace the generic administration/tool blocks in the left sidebar with a dedicated Health Monitor menu, test, and deploy to production
+
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
