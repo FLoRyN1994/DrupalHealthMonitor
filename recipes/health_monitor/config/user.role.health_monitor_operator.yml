@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - hm_core
+id: health_monitor_operator
+label: 'Health Monitor Operator'
+weight: 3
+is_admin: false
+permissions:
+  - 'administer health monitor'

@@ -10,6 +10,7 @@ use Drupal\Core\Recipe\RecipeRunner;
 use Drupal\hm_core\Entity\Site;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
+use Drupal\user\Entity\Role;
 use Drupal\views\Entity\View;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
@@ -72,8 +73,12 @@ final class HealthMonitorRecipeTest extends KernelTestBase {
     self::assertTrue($this->container->get('theme_handler')->themeExists('hm_theme'));
     self::assertSame('hm_theme', $this->config('system.theme')->get('default'));
     self::assertSame('/health-monitor', $this->config('system.site')->get('page.front'));
+    self::assertSame('visitors_admin_approval', $this->config('user.settings')->get('register'));
+    self::assertFalse($this->config('user.settings')->get('verify_mail'));
+    self::assertFalse($this->config('user.settings')->get('notify.register_pending_approval'));
 
     self::assertNotNull(Block::load('hm_theme_content'));
+    self::assertNotNull(Role::load('health_monitor_operator'));
     self::assertNotNull(View::load('hm_clients'));
     self::assertNotNull(View::load('hm_sites'));
     self::assertSame(['mcp_client'], $this->config('mcp.settings')->get('plugins.list.roles'));
