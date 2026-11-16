@@ -70,10 +70,28 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Install Admin Toolbar and Admin Toolbar Extra Tools, include them in repeatable configuration, test, and deploy to production
 
 ## M10 — Focused application sidebar
-- [~] Replace the generic administration/tool blocks in the left sidebar with a dedicated Health Monitor menu, test, and deploy to production
+- [x] Replace the generic administration/tool blocks in the left sidebar with a dedicated Health Monitor menu, test, and deploy to production
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-16, Codex — Completed and deployed M10 through PR #17. The left
+  sidebar now renders a dedicated locked Health Monitor menu containing only
+  Overview, Sites, Clients, Findings, Snapshots, and AI reports. The generic
+  Tools and Administration blocks were removed; complete Drupal administration
+  remains available in the top Admin Toolbar. The menu is supplied by module
+  defaults, exported config, and the repeatable recipe, whose kernel test now
+  verifies the exact link set and absence of the old blocks. Authenticated local
+  visual inspection confirmed the focused layout. Composer validation/audit,
+  PHPCS (97 files), PHPStan (77 files), and PHPUnit (52 tests, 318 assertions)
+  pass; seven existing upstream AI/JSON-RPC deprecations remain. Railway app
+  deployment `3ca0507e-eab7-41f6-9b58-8e4c9dec62c7` and final cron deployment
+  `c1ec9a80-bbc6-4d9f-bb86-45f424aeb5c0` succeeded. Two earlier cron image
+  pushes failed on a transient Railway registry TLS certificate error; the
+  third succeeded without a source change. Production has no config drift, the
+  authenticated sidebar contains exactly the six product links and no generic
+  labels, full admin categories remain in the top toolbar, public access rules
+  are unchanged, and verbose cron completes cleanly. M10 is complete.
 
 - 2026-11-16, Codex — Completed and deployed M9 through PR #15. Composer now
   installs the security-covered Admin Toolbar 3.6.3 package; exported config and
