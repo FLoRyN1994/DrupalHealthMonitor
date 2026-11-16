@@ -16,6 +16,7 @@
     ],
     "require": {
         "composer/installers": "^2.3",
+        "drupal/admin_toolbar": "^3.6",
         "drupal/ai": "^1.5.2",
         "drupal/ai_provider_anthropic": "^1.2.2",
         "drupal/core-composer-scaffold": "^11.4",

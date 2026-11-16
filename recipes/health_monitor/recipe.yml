@@ -2,6 +2,8 @@ name: 'Drupal Health Monitor'
 description: 'Installs the fleet dashboard, AI and MCP integration, and safe demo content.'
 type: 'Site'
 install:
+  - admin_toolbar
+  - admin_toolbar_tools
   - block
   - dblog
   - dynamic_page_cache
