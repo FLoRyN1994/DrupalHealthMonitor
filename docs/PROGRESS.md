@@ -63,6 +63,9 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Redesigned fleet dashboard, site cards, health indicators, filters, and findings table
 - [x] Accessibility, visual regression, full quality gate, and production deployment
 
+## M8 — Account onboarding
+- [~] Public registration page with password setup, administrator approval, operator access, landing-page calls to action, testing, and production deployment
+
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 

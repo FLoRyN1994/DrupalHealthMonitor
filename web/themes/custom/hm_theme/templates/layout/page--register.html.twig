@@ -1,0 +1,47 @@
+{# Public account request experience. #}
+<div class="hm-register-page">
+  <header class="hm-register-header">
+    <div class="hm-register-container hm-register-header__inner">
+      <a class="hm-brand hm-brand--light" href="{{ path('<front>') }}" rel="home" aria-label="Drupal Health Monitor home">
+        <span class="hm-brand__mark" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M18 2.5 31 8v9.1c0 8-5.2 13.8-13 16.4C10.2 30.9 5 25.1 5 17.1V8l13-5.5Z"/><path d="m10 19 4-4 3 3 5-7 4 4"/></svg></span>
+        <span class="hm-brand__text"><strong>Health Monitor</strong><small>for Drupal fleets</small></span>
+      </a>
+      <p>Already have an account? <a href="{{ path('user.login') }}">Sign in</a></p>
+    </div>
+  </header>
+
+  <main class="hm-register-main" id="main-content">
+    <div class="hm-register-container hm-register-grid">
+      <section class="hm-register-intro">
+        <p class="hm-eyebrow hm-eyebrow--cyan"><span></span> Secure workspace access</p>
+        <h1>Bring your Drupal fleet into one operational view.</h1>
+        <p class="hm-register-intro__lead">Create an account request for Health Monitor. Every registration is reviewed before fleet access is activated.</p>
+
+        <ul class="hm-register-benefits">
+          <li><span aria-hidden="true">01</span><div><strong>One fleet overview</strong><small>Track health, findings, uptime, and Drupal 12 readiness.</small></div></li>
+          <li><span aria-hidden="true">02</span><div><strong>Evidence-first analysis</strong><small>Deterministic rules create every alert and effort estimate.</small></div></li>
+          <li><span aria-hidden="true">03</span><div><strong>Deliberate access control</strong><small>New workspaces remain private until an administrator approves them.</small></div></li>
+        </ul>
+
+        <div class="hm-register-process" aria-label="Account activation process">
+          <div><span>1</span><p><strong>Request</strong><small>Enter your account details</small></p></div>
+          <i aria-hidden="true"></i>
+          <div><span>2</span><p><strong>Review</strong><small>Administrator checks access</small></p></div>
+          <i aria-hidden="true"></i>
+          <div><span>3</span><p><strong>Activate</strong><small>Administrator approval</small></p></div>
+        </div>
+      </section>
+
+      <section class="hm-register-card" aria-label="Account registration form">
+        {% if page.highlighted %}<div class="hm-register-messages">{{ page.highlighted }}</div>{% endif %}
+        {{ page.content }}
+        <div class="hm-register-card__note">
+          <span aria-hidden="true">✦</span>
+          <p><strong>Your data stays private.</strong><small>Registration creates a pending account only. It does not expose fleet data or grant access automatically.</small></p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="hm-register-footer"><div class="hm-register-container"><span>Drupal Health Monitor</span><a href="{{ path('<front>') }}#security">Security and product boundaries</a></div></footer>
+</div>

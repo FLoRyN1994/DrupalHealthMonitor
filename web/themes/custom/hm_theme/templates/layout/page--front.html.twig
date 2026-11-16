@@ -9,9 +9,18 @@
       <nav class="hm-landing-nav__links" aria-label="Main navigation">
         <a href="#capabilities">Scope</a><a href="#workflow">How it works</a><a href="#onboarding">Register a site</a><a href="#security">Security</a>
       </nav>
-      <a class="hm-button hm-button--small hm-button--light" href="{{ logged_in ? path('hm_core.dashboard') : path('user.login') }}">{{ logged_in ? 'Open dashboard' : 'Sign in' }}</a>
+      <div class="hm-landing-nav__actions">
+        {% if logged_in %}
+          <a class="hm-button hm-button--small hm-button--light" href="{{ path('hm_core.dashboard') }}">Open dashboard</a>
+        {% else %}
+          <a class="hm-text-link hm-text-link--light" href="{{ path('user.login') }}">Sign in</a>
+          <a class="hm-button hm-button--small hm-button--light" href="{{ path('hm_core.register') }}">Register</a>
+        {% endif %}
+      </div>
     </div>
   </header>
+
+  {% if page.highlighted %}<div class="hm-landing-alerts"><div class="hm-landing-container">{{ page.highlighted }}</div></div>{% endif %}
 
   <main id="main-content">
     <section class="hm-hero">
@@ -21,8 +30,8 @@
           <h1>See every risk across your Drupal fleet. <em>Before your clients do.</em></h1>
           <p class="hm-hero__lead">One operational view for security updates, unsupported modules, Drupal 12 blockers, uptime, and the maintenance hours behind them.</p>
           <div class="hm-hero__actions">
-            <a class="hm-button hm-button--large hm-button--cyan" href="{{ logged_in ? path('hm_core.dashboard') : path('user.login') }}">{{ logged_in ? 'View fleet health' : 'Sign in to dashboard' }} <span aria-hidden="true">→</span></a>
-            <a class="hm-text-link hm-text-link--light" href="#onboarding">See how sites connect <span aria-hidden="true">↓</span></a>
+            <a class="hm-button hm-button--large hm-button--cyan" href="{{ logged_in ? path('hm_core.dashboard') : path('hm_core.register') }}">{{ logged_in ? 'View fleet health' : 'Create your account' }} <span aria-hidden="true">→</span></a>
+            <a class="hm-text-link hm-text-link--light" href="{{ logged_in ? '#onboarding' : path('user.login') }}">{{ logged_in ? 'See how sites connect' : 'Already registered? Sign in' }} <span aria-hidden="true">{{ logged_in ? '↓' : '→' }}</span></a>
           </div>
           <ul class="hm-hero__proof" aria-label="Product principles"><li><span aria-hidden="true">✓</span> No automatic updates</li><li><span aria-hidden="true">✓</span> Evidence-first analysis</li><li><span aria-hidden="true">✓</span> Secrets stay outside Git</li></ul>
         </div>
@@ -68,7 +77,7 @@
     <section class="hm-section" id="onboarding">
       <div class="hm-landing-container hm-onboarding">
         <div class="hm-onboarding__intro"><p class="hm-eyebrow"><span></span> Register a Drupal site</p><h2>Four steps from client site to live fleet data.</h2><p>The monitor never needs administrator credentials for a client site. It receives a bounded status payload through the core-only agent module.</p><a class="hm-text-link" href="https://github.com/FLoRyN1994/DrupalHealthMonitor" rel="noopener noreferrer">View installation source on GitHub <span aria-hidden="true">↗</span></a></div>
-        <ol class="hm-onboarding__steps"><li><span>01</span><div><h3>Install the agent</h3><p>Place <code>hm_agent</code> on the client Drupal site and enable it. It supports Drupal 10.3 and 11 with core-only dependencies.</p></div></li><li><span>02</span><div><h3>Create the shared secret</h3><p>Generate a random secret and expose it to Drupal through environment-specific settings—never exported configuration or Git.</p><code>$settings['hm_agent_secret'] = getenv('HM_AGENT_SECRET');</code></div></li><li><span>03</span><div><h3>Add client and site</h3><p>In the monitor, create the client, add its site URL and environment, then select the matching Key record.</p><div class="hm-onboarding__links">{% if logged_in %}<a href="{{ path('entity.hm_client.add_form') }}">Add client</a><a href="{{ path('entity.hm_site.add_form') }}">Add site</a>{% else %}<a href="{{ path('user.login') }}">Sign in to register</a>{% endif %}</div></div></li><li><span>04</span><div><h3>Let cron collect</h3><p>Scheduled queue workers sign the request, validate the response, store the snapshot, analyze releases, and update the health score.</p></div></li></ol>
+        <ol class="hm-onboarding__steps"><li><span>01</span><div><h3>Create your account</h3><p>Request a secure monitor account. Administrator approval keeps fleet access private.</p>{% if not logged_in %}<div class="hm-onboarding__links"><a href="{{ path('hm_core.register') }}">Register now</a></div>{% endif %}</div></li><li><span>02</span><div><h3>Install the agent</h3><p>Place <code>hm_agent</code> on the client Drupal site and enable it. It supports Drupal 10.3 and 11 with core-only dependencies.</p></div></li><li><span>03</span><div><h3>Create the shared secret</h3><p>Generate a random secret and expose it to Drupal through environment-specific settings—never exported configuration or Git.</p><code>$settings['hm_agent_secret'] = getenv('HM_AGENT_SECRET');</code></div></li><li><span>04</span><div><h3>Add the site and collect</h3><p>Add the client, site URL, environment, and matching Key record. Scheduled workers then collect and analyze signed snapshots.</p><div class="hm-onboarding__links">{% if logged_in %}<a href="{{ path('entity.hm_client.add_form') }}">Add client</a><a href="{{ path('entity.hm_site.add_form') }}">Add site</a>{% else %}<a href="{{ path('hm_core.register') }}">Request access</a>{% endif %}</div></div></li></ol>
       </div>
     </section>
 
@@ -78,7 +87,7 @@
 
     <section class="hm-scope"><div class="hm-landing-container hm-scope__grid"><div><p class="hm-eyebrow hm-eyebrow--cyan"><span></span> Clear product boundary</p><h2>A decision surface, not an autopilot.</h2></div><div class="hm-scope__columns"><article><h3><span>✓</span> What it does</h3><ul><li>Registers clients and Drupal environments</li><li>Collects signed operational snapshots</li><li>Flags update, support, D12, and uptime risks</li><li>Estimates and explains maintenance work</li></ul></article><article><h3><span>—</span> What it intentionally does not do</h3><ul><li>Apply updates automatically</li><li>Store client administrator passwords</li><li>Replace human release planning</li><li>Invent findings with generative AI</li></ul></article></div></div></section>
 
-    <section class="hm-final-cta"><div class="hm-landing-container hm-final-cta__inner"><div><p class="hm-eyebrow hm-eyebrow--cyan"><span></span> Your fleet, made legible</p><h2>Turn scattered maintenance signals into a weekly plan.</h2></div><a class="hm-button hm-button--large hm-button--cyan" href="{{ logged_in ? path('hm_core.dashboard') : path('user.login') }}">{{ logged_in ? 'Open fleet overview' : 'Sign in to the monitor' }} <span aria-hidden="true">→</span></a></div></section>
+    <section class="hm-final-cta"><div class="hm-landing-container hm-final-cta__inner"><div><p class="hm-eyebrow hm-eyebrow--cyan"><span></span> Your fleet, made legible</p><h2>Turn scattered maintenance signals into a weekly plan.</h2></div><a class="hm-button hm-button--large hm-button--cyan" href="{{ logged_in ? path('hm_core.dashboard') : path('hm_core.register') }}">{{ logged_in ? 'Open fleet overview' : 'Create your account' }} <span aria-hidden="true">→</span></a></div></section>
   </main>
 
   <footer class="hm-landing-footer"><div class="hm-landing-container hm-landing-footer__inner"><a class="hm-brand hm-brand--light" href="{{ path('<front>') }}"><span class="hm-brand__mark" aria-hidden="true"><svg viewBox="0 0 36 36"><path d="M18 2.5 31 8v9.1c0 8-5.2 13.8-13 16.4C10.2 30.9 5 25.1 5 17.1V8l13-5.5Z"/><path d="m10 19 4-4 3 3 5-7 4 4"/></svg></span><span class="hm-brand__text"><strong>Health Monitor</strong><small>for Drupal fleets</small></span></a><p>Open-source portfolio project built with Drupal 11, HTMX, AI, and MCP.</p><div><a href="https://github.com/FLoRyN1994/DrupalHealthMonitor" rel="noopener noreferrer">GitHub</a><a href="#capabilities">Scope</a><a href="#onboarding">Setup</a></div></div></footer>

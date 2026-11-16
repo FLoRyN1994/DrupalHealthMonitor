@@ -32,7 +32,8 @@
       {% else %}
         <div class="hm-app-header__actions">
           <a class="hm-header-link" href="{{ path('<front>') }}#capabilities">Product</a>
-          <a class="hm-button hm-button--small" href="{{ path('user.login') }}">Sign in</a>
+          <a class="hm-header-link" href="{{ path('user.login') }}">Sign in</a>
+          <a class="hm-button hm-button--small" href="{{ path('hm_core.register') }}">Register</a>
         </div>
       {% endif %}
     </div>
