@@ -59,6 +59,10 @@ final class DashboardControllerTest extends KernelTestBase {
       ->getRouteByName('hm_core.landing');
     self::assertSame('/health-monitor', $landingRoute->getPath());
     self::assertSame('TRUE', $landingRoute->getRequirement('_access'));
+    $registrationRoute = $this->container->get('router.route_provider')
+      ->getRouteByName('hm_core.register');
+    self::assertSame('/register', $registrationRoute->getPath());
+    self::assertSame('TRUE', $registrationRoute->getRequirement('_access_user_register'));
 
     $client = Client::create([
       'name' => 'Example client',

@@ -7,6 +7,14 @@ hm_core.landing:
     # This product overview is intentionally available to anonymous visitors.
     _access: 'TRUE'
 
+hm_core.register:
+  path: '/register'
+  defaults:
+    _entity_form: 'user.register'
+    _title: 'Create your account'
+  requirements:
+    _access_user_register: 'TRUE'
+
 hm_core.dashboard:
   path: '/admin/health-monitor/dashboard'
   defaults:
