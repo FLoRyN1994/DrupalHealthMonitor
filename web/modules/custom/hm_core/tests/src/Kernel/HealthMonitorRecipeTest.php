@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\hm_core\Kernel;
 
 use Drupal\block\Entity\Block;
+use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Recipe\Recipe;
 use Drupal\Core\Recipe\RecipeRunner;
 use Drupal\hm_core\Entity\Site;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\system\Entity\Menu;
 use Drupal\user\Entity\User;
 use Drupal\user\Entity\Role;
 use Drupal\views\Entity\View;
@@ -78,6 +80,15 @@ final class HealthMonitorRecipeTest extends KernelTestBase {
     self::assertFalse($this->config('user.settings')->get('notify.register_pending_approval'));
 
     self::assertNotNull(Block::load('hm_theme_content'));
+    self::assertNotNull(Block::load('hm_theme_health_monitor'));
+    self::assertNull(Block::load('hm_theme_admin'));
+    self::assertNull(Block::load('hm_theme_tools'));
+    self::assertNotNull(Menu::load('health-monitor'));
+    $menuTree = $this->container->get('menu.link_tree')->load('health-monitor', new MenuTreeParameters());
+    self::assertSame(
+      ['Overview', 'Sites', 'Clients', 'Findings', 'Snapshots', 'AI reports'],
+      array_values(array_map(static fn ($element): string => (string) $element->link->getTitle(), $menuTree)),
+    );
     self::assertNotNull(Role::load('health_monitor_operator'));
     self::assertNotNull(View::load('hm_clients'));
     self::assertNotNull(View::load('hm_sites'));
