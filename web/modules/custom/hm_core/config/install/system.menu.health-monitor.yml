@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+id: health-monitor
+label: 'Health Monitor'
+description: 'Health Monitor application navigation'
+locked: true
