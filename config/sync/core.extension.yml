@@ -1,9 +1,12 @@
 _core:
   default_config_hash: 4GIX5Esnc_umpXUBj4IIocRX7Mt5fPhm4AgXfE3E56E
 module:
+  admin_toolbar: 0
+  admin_toolbar_tools: 0
   ai: 0
   ai_provider_anthropic: 0
   block: 0
+  breakpoint: 0
   consumers: 0
   dblog: 0
   dynamic_page_cache: 0
@@ -24,6 +27,7 @@ module:
   simple_oauth: 0
   system: 0
   text: 0
+  toolbar: 0
   update: 0
   user: 0
   views: 0

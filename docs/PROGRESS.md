@@ -66,6 +66,9 @@ Update this file at the end of every session (see AGENTS.md).
 ## M8 — Account onboarding
 - [x] Public registration page with password setup, administrator approval, operator access, landing-page calls to action, testing, and production deployment
 
+## M9 — Administration navigation
+- [~] Install Admin Toolbar and Admin Toolbar Extra Tools, include them in repeatable configuration, test, and deploy to production
+
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 

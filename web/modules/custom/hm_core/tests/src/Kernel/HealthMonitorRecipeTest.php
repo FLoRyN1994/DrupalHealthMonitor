@@ -67,7 +67,7 @@ final class HealthMonitorRecipeTest extends KernelTestBase {
   public function testRecipe(): void {
     $this->applyRecipe();
 
-    foreach (['hm_core', 'mcp', 'simple_oauth'] as $module) {
+    foreach (['admin_toolbar', 'admin_toolbar_tools', 'hm_core', 'mcp', 'simple_oauth'] as $module) {
       self::assertTrue($this->container->get('module_handler')->moduleExists($module));
     }
     self::assertTrue($this->container->get('theme_handler')->themeExists('hm_theme'));
