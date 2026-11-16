@@ -67,10 +67,27 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Public registration page with password setup, administrator approval, operator access, landing-page calls to action, testing, and production deployment
 
 ## M9 — Administration navigation
-- [~] Install Admin Toolbar and Admin Toolbar Extra Tools, include them in repeatable configuration, test, and deploy to production
+- [x] Install Admin Toolbar and Admin Toolbar Extra Tools, include them in repeatable configuration, test, and deploy to production
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-16, Codex — Completed and deployed M9 through PR #15. Composer now
+  installs the security-covered Admin Toolbar 3.6.3 package; exported config and
+  the repeatable install recipe explicitly enable `admin_toolbar` and
+  `admin_toolbar_tools`, while optional Search and the deprecated access-filter
+  submodule remain disabled. A recipe kernel test verifies both requested
+  modules on a fresh install. Local authenticated visual inspection confirmed
+  the two-level administration toolbar coexists with the Health Monitor
+  navigation. Composer validation/audit, PHPCS (96 files), PHPStan (77 files),
+  and PHPUnit (52 tests, 314 assertions) pass; seven existing upstream
+  AI/JSON-RPC deprecations remain. Railway app deployment
+  `617732eb-6fb4-4c78-b800-f4c225482c8a` and cron deployment
+  `82fe4b95-6c3a-4966-b76e-acf34713935c` succeeded. Production config has no
+  drift; both modules are enabled, the authenticated dashboard contains the
+  drop-down categories and Extra Tools actions, public pages return 200,
+  anonymous dashboard access remains 403, and verbose cron completes cleanly.
+  M9 is complete.
 
 - 2026-11-16, Codex — Completed and deployed M8 through PR #13. The public
   `/register` experience now collects email, username, and password, creates a
