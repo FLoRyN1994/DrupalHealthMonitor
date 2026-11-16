@@ -1,0 +1,12 @@
+uuid: c16d8a00-e1a5-44a6-b014-81e4acb5698b
+langcode: en
+status: true
+dependencies:
+  module:
+    - hm_core
+id: health_monitor_operator
+label: 'Health Monitor Operator'
+weight: 3
+is_admin: false
+permissions:
+  - 'administer health monitor'
