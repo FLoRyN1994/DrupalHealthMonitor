@@ -72,8 +72,45 @@ Update this file at the end of every session (see AGENTS.md).
 ## M10 — Focused application sidebar
 - [x] Replace the generic administration/tool blocks in the left sidebar with a dedicated Health Monitor menu, test, and deploy to production
 
+## M11 — Agent-key navigation
+- [~] Add permission-aware access to the Keys administration page from the Health Monitor sidebar, test, and deploy to production
+
+## M12 — Publish `hm_agent` on drupal.org
+- [x] Audit `hm_agent` against current drupal.org full-project requirements
+- [x] Add module-level `README.md` (standard sections), `LICENSE.txt`
+  (GPL-2.0-or-later), and `composer.json` (`drupal/hm_agent`, no contrib deps)
+- [ ] Create/confirm drupal.org account; check `hm_agent` short-name availability
+- [ ] Extract `web/modules/custom/hm_agent` into its own `git.drupalcode.org`
+  repo with GitLab CI for drupal.org's automated review
+- [ ] Create the full project on drupal.org and push the extracted history
+- [ ] (Later) apply for security advisory coverage once there is commit history
+
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-16, Claude — Scoped M12 (publishing `hm_agent` on drupal.org) after
+  auditing it against current drupal.org full-project requirements (full
+  projects are now self-service, no sandbox/"git vetted" role needed).
+  `hm_agent` was already core-only with full unit/kernel test coverage
+  (`SignatureValidatorTest`, `StatusControllerTest`,
+  `UpgradeStatusCollectorTest`, `ServiceWiringTest`) and clean
+  PHPCS/PHPStan. Added the three artifacts a standalone contrib project
+  needs: an expanded `README.md` following the drupal.org module
+  documentation template (Introduction/Requirements/Installation/
+  Configuration/Maintainers), a `LICENSE.txt` copied from the repo root
+  (GPL-2.0-or-later), and a `composer.json` (`drupal/hm_agent`, type
+  `drupal-module`, no dependencies beyond PHP 8.1+). All three pass the
+  repo's PHPCS ruleset, which also lints `.md`/`.txt` line length. Full
+  `hm_agent` PHPUnit suite (11 tests, 37 assertions) and PHPStan still pass;
+  `composer validate` passes for both the root and the new module
+  `composer.json`. What remains is not code: creating/using a drupal.org
+  account, confirming the `hm_agent` short name is free, extracting the
+  module into its own `git.drupalcode.org` repo with drupal.org's GitLab CI
+  templates, and creating the full project there. Security advisory coverage
+  is a separate, later application once there's commit history on
+  drupal.org. This session did not touch M11; `hm_core.links.menu.yml` and
+  `HealthMonitorRecipeTest.php` have pre-existing uncommitted changes from
+  before this session that were not authored here.
 
 - 2026-11-16, Codex — Completed and deployed M10 through PR #17. The left
   sidebar now renders a dedicated locked Health Monitor menu containing only

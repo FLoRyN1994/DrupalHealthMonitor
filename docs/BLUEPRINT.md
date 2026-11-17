@@ -145,7 +145,39 @@ drupal-health-monitor/
 
 README must have: a one-line pitch, a screenshot or GIF of the dashboard, the architecture diagram, `ddev start && ddev drush recipe ../recipes/health_monitor` setup, the MCP demo, and a "what I'd do next" list. Add a CI badge and a license (GPL-2.0-or-later, same as Drupal).
 
-Later, publish `hm_agent` on drupal.org as a contrib project. A maintained contrib module is strong proof for agencies.
+Later, publish `hm_agent` on drupal.org as a contrib project. A maintained contrib module is strong proof for agencies. See M12 in `docs/PROGRESS.md` for the scoped checklist.
+
+### M12 — Publish `hm_agent` on drupal.org
+
+`hm_agent` is already core-only (`^10.3 || ^11`), has unit/kernel test
+coverage, and passes PHPCS/PHPStan as part of this monorepo. Publishing it as
+an independent contrib project additionally requires, per current drupal.org
+guidance (full projects are now self-service; no sandbox or "git vetted"
+role is required):
+
+1. **drupal.org account** — create one if needed; confirm the short project
+   name `hm_agent` (or a clearer alternative, e.g. `health_monitor_agent`) is
+   not already taken by a legacy sandbox project.
+2. **Module-level packaging artifacts** — done in this repo:
+   `web/modules/custom/hm_agent/{README.md,LICENSE.txt,composer.json}` now
+   follow the drupal.org module documentation template and GPL-2.0-or-later
+   licensing.
+3. **Standalone repository extraction** — drupal.org projects live in their
+   own `git.drupalcode.org` repo, not a monorepo subdirectory. Extract
+   `web/modules/custom/hm_agent` (code + tests + the three files above) into
+   a new repo with its own `.gitlab-ci.yml` using drupal.org's GitLab CI
+   templates (DrupalCI/GitLabCI, not GitHub Actions, is what drupal.org runs
+   on merge requests).
+4. **Create the full project** on drupal.org (Name, Project Type = Module,
+   Short name, Module Categories, description) and push the extracted
+   history to the assigned `project/hm_agent.git` remote.
+5. **Optional, after a release history exists** — apply for security
+   advisory coverage via the project's "Opt into security advisory coverage"
+   application, which wants several weeks of commit history, a release-ready
+   branch, and no known vulnerabilities before it will be reviewed.
+
+Steps 1, 4, and 5 are account/process actions outside this codebase and must
+be done by the project owner directly on drupal.org.
 
 ## Hosting and CI/CD
 
