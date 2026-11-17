@@ -57,6 +57,9 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --no-progress --prefer-dist
 
+      - name: Security advisories (composer audit)
+        run: composer audit --locked --no-interaction
+
       - name: Detect custom code
         id: custom_code
         run: |
