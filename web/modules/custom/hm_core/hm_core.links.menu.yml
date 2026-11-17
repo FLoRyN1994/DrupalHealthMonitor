@@ -75,3 +75,10 @@ hm_core.sidebar.ai_reports:
   route_name: entity.hm_ai_report.collection
   menu_name: health-monitor
   weight: 30
+
+hm_core.sidebar.agent_keys:
+  title: 'Agent keys'
+  description: 'Manage environment-backed client agent keys.'
+  route_name: entity.key.collection
+  menu_name: health-monitor
+  weight: 40
