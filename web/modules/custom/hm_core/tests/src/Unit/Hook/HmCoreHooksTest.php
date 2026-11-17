@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\hm_core\Hook\HmCoreHooks;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
@@ -30,6 +31,7 @@ final class HmCoreHooksTest extends UnitTestCase {
     $hooks = new HmCoreHooks(
       $this->createMock(ConfigFactoryInterface::class),
       $this->createMock(MessengerInterface::class),
+      $this->createMock(AccountProxyInterface::class),
     );
     $hooks->setStringTranslation($this->getStringTranslationStub());
     $routeMatch = $this->createMock(RouteMatchInterface::class);
@@ -63,7 +65,7 @@ final class HmCoreHooksTest extends UnitTestCase {
         static fn (mixed $message): bool => str_contains((string) $message, 'pending administrator approval'),
       ));
 
-    $hooks = new HmCoreHooks($configFactory, $messenger);
+    $hooks = new HmCoreHooks($configFactory, $messenger, $this->currentUser(FALSE));
     $hooks->setStringTranslation($this->getStringTranslationStub());
     $form = ['actions' => ['submit' => ['#submit' => []]]];
     $formState = $this->createMock(FormStateInterface::class);
@@ -86,6 +88,33 @@ final class HmCoreHooksTest extends UnitTestCase {
       $form['actions']['submit']['#submit'][0],
     );
     $hooks->replaceRegistrationConfirmation($form, $formState);
+  }
+
+  /**
+   * Tests that administrator-created accounts are left untouched.
+   */
+  public function testAdministratorCreatedAccountIsNotAltered(): void {
+    $configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $configFactory->expects(self::never())->method('get');
+    $hooks = new HmCoreHooks(
+      $configFactory,
+      $this->createMock(MessengerInterface::class),
+      $this->currentUser(TRUE),
+    );
+    $form = ['actions' => ['submit' => ['#submit' => []]]];
+
+    $hooks->userRegisterFormAlter($form, $this->createMock(FormStateInterface::class));
+
+    self::assertSame([], $form['actions']['submit']['#submit']);
+  }
+
+  /**
+   * Creates a current-user stub.
+   */
+  private function currentUser(bool $authenticated): AccountProxyInterface {
+    $currentUser = $this->createMock(AccountProxyInterface::class);
+    $currentUser->method('isAuthenticated')->willReturn($authenticated);
+    return $currentUser;
   }
 
 }

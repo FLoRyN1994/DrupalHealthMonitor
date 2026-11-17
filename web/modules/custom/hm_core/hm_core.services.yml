@@ -9,6 +9,8 @@ services:
 
   Drupal\hm_core\SiteCheckScheduler: ~
 
+  Drupal\hm_core\DataRetention: ~
+
   Drupal\hm_core\Analysis\ProjectAnalyzer: ~
 
   Drupal\hm_core\Analysis\FindingReconciler: ~

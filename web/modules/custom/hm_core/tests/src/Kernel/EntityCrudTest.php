@@ -48,6 +48,7 @@ final class EntityCrudTest extends KernelTestBase {
     $this->installEntitySchema('hm_snapshot');
     $this->installEntitySchema('hm_finding');
     $this->installEntitySchema('hm_ai_report');
+    $this->installSchema('hm_core', ['hm_uptime_check']);
   }
 
   /**
