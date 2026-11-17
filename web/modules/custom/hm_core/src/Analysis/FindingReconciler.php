@@ -72,11 +72,20 @@ final class FindingReconciler {
           throw new \UnexpectedValueException('Finding storage returned an invalid entity.');
         }
       }
-      $finding->set('severity', $candidate->severity);
-      $finding->set('current_version', $candidate->currentVersion);
-      $finding->set('recommended_version', $candidate->recommendedVersion);
-      $finding->set('resolved', FALSE);
-      $finding->save();
+      $values = [
+        'severity' => $candidate->severity,
+        'current_version' => $candidate->currentVersion,
+        'recommended_version' => $candidate->recommendedVersion,
+        'resolved' => FALSE,
+      ];
+      // Saving an unchanged finding on every check would needlessly write to
+      // the database and invalidate the finding list cache tag each cron run.
+      if ($finding->isNew() || $this->hasChanges($finding, $values)) {
+        foreach ($values as $fieldName => $value) {
+          $finding->set($fieldName, $value);
+        }
+        $finding->save();
+      }
       $this->setResolved($matches, TRUE);
     }
   }
@@ -104,6 +113,30 @@ final class FindingReconciler {
     }
     $entities = $storage->loadMultiple($query->execute());
     $this->setResolved(array_values($entities), TRUE);
+  }
+
+  /**
+   * Returns whether any value differs from the finding's stored value.
+   *
+   * @param \Drupal\hm_core\Entity\Finding $finding
+   *   An existing finding.
+   * @param array<string, string|bool|null> $values
+   *   New values keyed by field name.
+   */
+  private function hasChanges(Finding $finding, array $values): bool {
+    foreach ($values as $fieldName => $value) {
+      $stored = $finding->get($fieldName)->value;
+      if (is_bool($value)) {
+        if ((bool) $stored !== $value) {
+          return TRUE;
+        }
+      }
+      elseif ((string) ($stored ?? '') !== (string) ($value ?? '')) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
   /**

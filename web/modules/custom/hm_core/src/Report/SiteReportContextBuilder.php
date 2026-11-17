@@ -29,17 +29,11 @@ final class SiteReportContextBuilder {
       ->accessCheck(FALSE)
       ->condition('site', $site->id())
       ->condition('resolved', FALSE)
-      ->sort('severity')
-      ->sort('project_name')
       ->execute();
 
     $reportFindings = [];
     $effortHours = 0.0;
-    foreach ($findingStorage->loadMultiple($findingIds) as $finding) {
-      if (!$finding instanceof Finding) {
-        continue;
-      }
-
+    foreach (Finding::sortByUrgency($findingStorage->loadMultiple($findingIds)) as $finding) {
       $type = (string) $finding->get('type')->value;
       $severity = (string) $finding->get('severity')->value;
       $reportFindings[] = new ReportFinding(
