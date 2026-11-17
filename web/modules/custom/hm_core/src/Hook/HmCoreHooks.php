@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\UserInterface;
 
@@ -26,6 +27,7 @@ final class HmCoreHooks {
   public function __construct(
     private readonly ConfigFactoryInterface $configFactory,
     private readonly MessengerInterface $messenger,
+    private readonly AccountProxyInterface $currentUser,
   ) {}
 
   /**
@@ -53,6 +55,12 @@ final class HmCoreHooks {
    */
   #[Hook('form_user_register_form_alter')]
   public function userRegisterFormAlter(array &$form, FormStateInterface $formState): void {
+    // Administrators create accounts with the same form. Only visitor
+    // self-registration should get the operator role and pending message.
+    if ($this->currentUser->isAuthenticated()) {
+      return;
+    }
+
     $settings = $this->configFactory->get('user.settings');
     if ($settings->get('register') !== UserInterface::REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL
       || $settings->get('notify.register_pending_approval')) {
