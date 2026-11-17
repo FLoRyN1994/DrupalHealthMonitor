@@ -86,7 +86,7 @@ final class HealthMonitorRecipeTest extends KernelTestBase {
     self::assertNotNull(Menu::load('health-monitor'));
     $menuTree = $this->container->get('menu.link_tree')->load('health-monitor', new MenuTreeParameters());
     self::assertSame(
-      ['Overview', 'Sites', 'Clients', 'Findings', 'Snapshots', 'AI reports'],
+      ['Overview', 'Sites', 'Clients', 'Findings', 'Snapshots', 'AI reports', 'Agent keys'],
       array_values(array_map(static fn ($element): string => (string) $element->link->getTitle(), $menuTree)),
     );
     self::assertNotNull(Role::load('health_monitor_operator'));
