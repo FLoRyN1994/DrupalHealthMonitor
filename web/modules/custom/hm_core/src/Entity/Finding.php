@@ -53,6 +53,49 @@ use Drupal\views\EntityViewsData;
 final class Finding extends HealthMonitorEntityBase {
 
   /**
+   * Severity machine names ordered from most to least urgent.
+   */
+  public const SEVERITY_ORDER = ['critical', 'high', 'medium', 'low', 'info'];
+
+  /**
+   * Returns a sortable urgency rank; lower values are more urgent.
+   */
+  public static function severityRank(string $severity): int {
+    $rank = array_search($severity, self::SEVERITY_ORDER, TRUE);
+    return $rank === FALSE ? count(self::SEVERITY_ORDER) : $rank;
+  }
+
+  /**
+   * Sorts findings by urgency, then project name, then ID.
+   *
+   * Severity is stored as a machine name, so a database sort would order it
+   * alphabetically (critical, high, info, low, medium) instead of by urgency.
+   *
+   * @param array<int|string, mixed> $entities
+   *   Loaded entities; anything that is not a Finding is discarded.
+   *
+   * @return list<\Drupal\hm_core\Entity\Finding>
+   *   Findings in urgency order.
+   */
+  public static function sortByUrgency(array $entities): array {
+    $findings = array_values(array_filter(
+      $entities,
+      static fn (mixed $entity): bool => $entity instanceof self,
+    ));
+    usort($findings, static fn (self $left, self $right): int => [
+      self::severityRank((string) $left->get('severity')->value),
+      (string) $left->get('project_name')->value,
+      (int) $left->id(),
+    ] <=> [
+      self::severityRank((string) $right->get('severity')->value),
+      (string) $right->get('project_name')->value,
+      (int) $right->id(),
+    ]);
+
+    return $findings;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entityType): array {

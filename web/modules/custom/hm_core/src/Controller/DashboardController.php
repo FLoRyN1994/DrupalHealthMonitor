@@ -71,20 +71,25 @@ final class DashboardController implements ContainerInjectionInterface {
         ->accessCheck(FALSE)
         ->condition('resolved', FALSE)
         ->condition('site', $siteIds, 'IN')
-        ->sort('severity')
-        ->sort('project_name')
         ->execute();
     }
-    $findings = $findingStorage->loadMultiple($findingIds);
+    $findings = Finding::sortByUrgency($findingStorage->loadMultiple($findingIds));
+
+    // Collect cacheability from every rendered entity into one object;
+    // applying each entity's metadata separately would overwrite, not merge.
+    $cacheability = (new CacheableMetadata())
+      ->addCacheContexts([
+        'url.query_args:environment',
+        'url.query_args:status',
+        'url.query_args:health',
+      ])
+      ->addCacheTags(['hm_site_list', 'hm_finding_list']);
 
     $findingCounts = [];
     $findingRows = [];
     $urgentFindingCount = 0;
     foreach ($findings as $finding) {
-      if (!$finding instanceof Finding) {
-        continue;
-      }
-
+      $cacheability->addCacheableDependency($finding);
       $site = $finding->get('site')->entity;
       if (!$site instanceof Site) {
         continue;
@@ -135,14 +140,6 @@ final class DashboardController implements ContainerInjectionInterface {
     $build = [
       '#type' => 'container',
       '#attributes' => ['class' => ['hm-dashboard']],
-      '#cache' => [
-        'contexts' => [
-          'url.query_args:environment',
-          'url.query_args:status',
-          'url.query_args:health',
-        ],
-        'tags' => ['hm_site_list', 'hm_finding_list'],
-      ],
       'intro' => [
         '#markup' => '<div class="hm-dashboard__intro"><p>Fleet operations</p><span>Health, open findings, upgrade risks, and maintenance priorities in one place.</span></div>',
       ],
@@ -152,7 +149,7 @@ final class DashboardController implements ContainerInjectionInterface {
         '#props' => [
           'site_count' => count($sites),
           'average_health' => $sites === [] ? 0 : (int) round($healthScoreTotal / count($sites)),
-          'open_findings' => count($findings),
+          'open_findings' => count($findingRows),
           'urgent_findings' => $urgentFindingCount,
         ],
       ],
@@ -181,9 +178,7 @@ final class DashboardController implements ContainerInjectionInterface {
       ],
     ];
 
-    foreach ($findings as $finding) {
-      CacheableMetadata::createFromObject($finding)->applyTo($build);
-    }
+    $cacheability->applyTo($build);
 
     return $build;
   }

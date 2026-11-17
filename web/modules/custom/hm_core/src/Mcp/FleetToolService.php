@@ -77,16 +77,11 @@ final class FleetToolService {
       ->accessCheck(FALSE)
       ->condition('site', $site->id())
       ->condition('resolved', FALSE)
-      ->sort('severity')
-      ->sort('project_name')
       ->execute();
 
     $findings = [];
     $totalHours = 0.0;
-    foreach ($findingStorage->loadMultiple($findingIds) as $finding) {
-      if (!$finding instanceof Finding) {
-        continue;
-      }
+    foreach (Finding::sortByUrgency($findingStorage->loadMultiple($findingIds)) as $finding) {
       $serialized = $this->serializeFinding($finding);
       $totalHours += $serialized['estimated_effort_hours'];
       $findings[] = $serialized;
@@ -114,16 +109,11 @@ final class FleetToolService {
       ->accessCheck(FALSE)
       ->condition('type', 'security')
       ->condition('resolved', FALSE)
-      ->sort('severity')
-      ->sort('project_name')
       ->execute();
 
     $updates = [];
     $totalHours = 0.0;
-    foreach ($findingStorage->loadMultiple($findingIds) as $finding) {
-      if (!$finding instanceof Finding) {
-        continue;
-      }
+    foreach (Finding::sortByUrgency($findingStorage->loadMultiple($findingIds)) as $finding) {
       $site = $finding->get('site')->entity;
       if (!$site instanceof Site) {
         continue;

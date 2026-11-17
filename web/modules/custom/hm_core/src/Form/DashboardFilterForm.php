@@ -79,6 +79,8 @@ final class DashboardFilterForm extends FormBase {
         ['all', 'healthy', 'attention', 'critical'],
       ),
     ];
+    // Reset is a plain link: an HTMX swap of only the results region would
+    // leave the filter selects showing the previous values.
     $form['actions'] = [
       '#type' => 'actions',
       'submit' => [
@@ -115,16 +117,6 @@ final class DashboardFilterForm extends FormBase {
       ->indicator('#hm-dashboard-loading')
       ->sync('this:replace');
     $htmx->applyTo($form);
-
-    $resetHtmx = (new Htmx())
-      ->get($dashboardUrl)
-      ->onlyMainContent()
-      ->select('#hm-dashboard-results')
-      ->target('#hm-dashboard-results')
-      ->swap('outerHTML')
-      ->pushUrl($dashboardUrl)
-      ->indicator('#hm-dashboard-loading');
-    $resetHtmx->applyTo($form['actions']['reset']);
 
     return $form;
   }
