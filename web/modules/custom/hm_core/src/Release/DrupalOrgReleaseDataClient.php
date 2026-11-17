@@ -6,6 +6,7 @@ namespace Drupal\hm_core\Release;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\hm_core\Http\BoundedBodyReader;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerInterface;
@@ -97,8 +98,8 @@ final class DrupalOrgReleaseDataClient implements ReleaseDataClientInterface {
       );
     }
 
-    $raw_xml = (string) $response->getBody();
-    if (strlen($raw_xml) > self::MAX_RESPONSE_BYTES) {
+    $raw_xml = BoundedBodyReader::read($response->getBody(), self::MAX_RESPONSE_BYTES);
+    if ($raw_xml === NULL) {
       return $this->cacheFailure(
         $cache_id,
         $projectName,

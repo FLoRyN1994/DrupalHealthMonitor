@@ -9,13 +9,14 @@ use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\hm_core\SiteCheckRunner;
+use Drupal\hm_core\SiteCheckScheduler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Processes queued site status checks.
  */
 #[QueueWorker(
-  id: 'hm_core_site_check',
+  id: SiteCheckScheduler::QUEUE_NAME,
   title: new TranslatableMarkup('Health Monitor site check'),
   cron: ['time' => 60],
 )]
@@ -32,12 +33,15 @@ final class SiteCheckQueueWorker extends QueueWorkerBase implements ContainerFac
    *   Plugin definition.
    * @param \Drupal\hm_core\SiteCheckRunner $siteCheckRunner
    *   Site-check runner service.
+   * @param \Drupal\hm_core\SiteCheckScheduler $siteCheckScheduler
+   *   Scheduler that tracks pending checks.
    */
   public function __construct(
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
     protected readonly SiteCheckRunner $siteCheckRunner,
+    protected readonly SiteCheckScheduler $siteCheckScheduler,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -65,6 +69,7 @@ final class SiteCheckQueueWorker extends QueueWorkerBase implements ContainerFac
       $plugin_id,
       $plugin_definition,
       $container->get(SiteCheckRunner::class),
+      $container->get(SiteCheckScheduler::class),
     );
   }
 
@@ -76,7 +81,14 @@ final class SiteCheckQueueWorker extends QueueWorkerBase implements ContainerFac
       return;
     }
 
-    $this->siteCheckRunner->check($data['site_id']);
+    try {
+      $this->siteCheckRunner->check($data['site_id']);
+    }
+    finally {
+      // Clear the marker even on failure: the next cron run should be free to
+      // queue a fresh check instead of waiting for the marker to expire.
+      $this->siteCheckScheduler->markProcessed($data['site_id']);
+    }
   }
 
 }

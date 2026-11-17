@@ -27,6 +27,7 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
+use Psr\Http\Message\RequestInterface;
 use Psr\Log\NullLogger;
 
 /**
@@ -45,6 +46,13 @@ final class CollectionTest extends KernelTestBase {
    * Request timestamp used by the test.
    */
   private const TIMESTAMP = 1_798_000_000;
+
+  /**
+   * Requests sent by the runner under test.
+   *
+   * @var list<\Psr\Http\Message\RequestInterface>
+   */
+  private array $sentRequests = [];
 
   /**
    * {@inheritdoc}
@@ -97,52 +105,13 @@ final class CollectionTest extends KernelTestBase {
       'pending_updates' => 0,
     ];
 
-    $history = [];
-    $handler_stack = HandlerStack::create(new MockHandler([
+    $runner = $this->buildRunner([
       new Response(200, ['Content-Type' => 'application/json'], json_encode($payload, JSON_THROW_ON_ERROR)),
-    ]));
-    $handler_stack->push(Middleware::history($history));
-    $http_client = new Client(['handler' => $handler_stack]);
-
-    $time = $this->createMock(TimeInterface::class);
-    $time->method('getCurrentTime')->willReturn(self::TIMESTAMP);
-    $time->method('getCurrentMicroTime')->willReturnOnConsecutiveCalls(1000.0, 1000.125);
-
-    $release_client = $this->createMock(ReleaseDataClientInterface::class);
-    $release_client->method('getProject')->willReturn(
-      ReleaseDataResult::unavailable('test', 'Not available in test.', self::TIMESTAMP),
-    );
-    $finding_reconciler = new FindingReconciler(
-      $this->container->get('entity_type.manager'),
-    );
-    $snapshot_analyzer = new SnapshotAnalyzer(
-      $release_client,
-      new ProjectAnalyzer(),
-      $finding_reconciler,
-      new UpgradeStatusAnalyzer(
-        $this->container->get('entity_type.manager'),
-        $finding_reconciler,
-      ),
-      new NullLogger(),
-    );
-    $health_score_updater = new HealthScoreUpdater(
-      $this->container->get('entity_type.manager'),
-      $this->container->get('database'),
-      new HealthScoreCalculator(),
-    );
-    $runner = new SiteCheckRunner(
-      $http_client,
-      $this->container->get('entity_type.manager'),
-      $this->container->get('database'),
-      $time,
-      new NullLogger(),
-      $snapshot_analyzer,
-      $health_score_updater,
-    );
+    ]);
     $runner->check((int) $site->id());
 
-    self::assertCount(1, $history);
-    $request = $history[0]['request'];
+    self::assertCount(1, $this->sentRequests);
+    $request = $this->sentRequests[0];
     self::assertSame('https://client.example/hm-agent/status', (string) $request->getUri());
     self::assertSame((string) self::TIMESTAMP, $request->getHeaderLine('X-HM-Timestamp'));
     self::assertSame(
@@ -184,6 +153,168 @@ final class CollectionTest extends KernelTestBase {
       1,
       $this->container->get('queue')->get('hm_core_site_check')->numberOfItems(),
     );
+  }
+
+  /**
+   * Tests that redirects are not followed with the signed headers.
+   */
+  public function testRedirectIsNotFollowed(): void {
+    $site = $this->createSite();
+    $runner = $this->buildRunner([
+      new Response(302, ['Location' => 'https://attacker.example/capture']),
+      new Response(200, [], '{}'),
+    ]);
+
+    $runner->check((int) $site->id());
+
+    self::assertCount(1, $this->sentRequests);
+    self::assertSame([], $this->snapshotIds());
+    $uptime = $this->onlyUptimeRow();
+    self::assertSame('302', $uptime['http_status']);
+    self::assertSame('0', $uptime['success']);
+    self::assertSame('Agent endpoint returned HTTP 302.', $uptime['error']);
+  }
+
+  /**
+   * Tests that oversized agent responses are rejected without parsing.
+   */
+  public function testOversizedResponseIsRejected(): void {
+    $site = $this->createSite();
+    $runner = $this->buildRunner([
+      new Response(200, [], str_repeat('x', 2_000_001)),
+    ]);
+
+    $runner->check((int) $site->id());
+
+    self::assertSame([], $this->snapshotIds());
+    self::assertSame('The agent response exceeded 2 MB.', $this->onlyUptimeRow()['error']);
+  }
+
+  /**
+   * Tests that non-web base URLs are never requested.
+   */
+  public function testInvalidBaseUrlIsNotRequested(): void {
+    $site = $this->createSite();
+    // Simulates legacy data saved before the URL constraint existed.
+    $site->set('base_url', 'file:///etc/passwd')->save();
+    $runner = $this->buildRunner([new Response(200, [], '{}')]);
+
+    $runner->check((int) $site->id());
+
+    self::assertSame([], $this->sentRequests);
+    self::assertFalse($this->onlyUptimeRow());
+  }
+
+  /**
+   * Tests that the Site entity rejects non-web base URLs.
+   */
+  public function testSiteBaseUrlValidation(): void {
+    $site = $this->createSite();
+    self::assertCount(0, $site->validate()->getByField('base_url'));
+
+    foreach (['javascript:alert(1)', 'ftp://client.example', 'https://client.example/?a=b'] as $invalid_url) {
+      $site->set('base_url', $invalid_url);
+      self::assertCount(1, $site->validate()->getByField('base_url'), $invalid_url);
+    }
+  }
+
+  /**
+   * Tests that sites with a pending check are not queued twice.
+   */
+  public function testSchedulingSkipsPendingSites(): void {
+    $site = $this->createSite();
+    $scheduler = $this->container->get(SiteCheckScheduler::class);
+    $queue = $this->container->get('queue')->get(SiteCheckScheduler::QUEUE_NAME);
+
+    self::assertSame(1, $scheduler->enqueueActiveSites());
+    self::assertSame(0, $scheduler->enqueueActiveSites());
+    self::assertSame(1, $queue->numberOfItems());
+
+    $scheduler->markProcessed((int) $site->id());
+    self::assertSame(1, $scheduler->enqueueActiveSites());
+    self::assertSame(2, $queue->numberOfItems());
+  }
+
+  /**
+   * Builds a site-check runner backed by mocked HTTP responses.
+   *
+   * @param list<\GuzzleHttp\Psr7\Response> $responses
+   *   Responses returned in order.
+   */
+  private function buildRunner(array $responses): SiteCheckRunner {
+    $handler_stack = HandlerStack::create(new MockHandler($responses));
+    $handler_stack->push(Middleware::mapRequest(
+      function (RequestInterface $request): RequestInterface {
+        $this->sentRequests[] = $request;
+        return $request;
+      },
+    ));
+    $http_client = new Client(['handler' => $handler_stack]);
+
+    $time = $this->createMock(TimeInterface::class);
+    $time->method('getCurrentTime')->willReturn(self::TIMESTAMP);
+    $time->method('getCurrentMicroTime')->willReturnOnConsecutiveCalls(1000.0, 1000.125);
+
+    $release_client = $this->createMock(ReleaseDataClientInterface::class);
+    $release_client->method('getProject')->willReturn(
+      ReleaseDataResult::unavailable('test', 'Not available in test.', self::TIMESTAMP),
+    );
+    $finding_reconciler = new FindingReconciler(
+      $this->container->get('entity_type.manager'),
+    );
+    $snapshot_analyzer = new SnapshotAnalyzer(
+      $release_client,
+      new ProjectAnalyzer(),
+      $finding_reconciler,
+      new UpgradeStatusAnalyzer(
+        $this->container->get('entity_type.manager'),
+        $finding_reconciler,
+      ),
+      new NullLogger(),
+    );
+    $health_score_updater = new HealthScoreUpdater(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('database'),
+      new HealthScoreCalculator(),
+    );
+
+    return new SiteCheckRunner(
+      $http_client,
+      $this->container->get('entity_type.manager'),
+      $this->container->get('database'),
+      $time,
+      new NullLogger(),
+      $snapshot_analyzer,
+      $health_score_updater,
+    );
+  }
+
+  /**
+   * Returns all stored snapshot IDs.
+   *
+   * @return array<int|string, int|string>
+   *   Snapshot IDs.
+   */
+  private function snapshotIds(): array {
+    return $this->container->get('entity_type.manager')
+      ->getStorage('hm_snapshot')
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->execute();
+  }
+
+  /**
+   * Returns the only uptime row, or FALSE when none was recorded.
+   *
+   * @return array<string, mixed>|false
+   *   The uptime row.
+   */
+  private function onlyUptimeRow(): array|false {
+    return $this->container->get('database')
+      ->select('hm_uptime_check', 'uptime')
+      ->fields('uptime')
+      ->execute()
+      ->fetchAssoc();
   }
 
   /**

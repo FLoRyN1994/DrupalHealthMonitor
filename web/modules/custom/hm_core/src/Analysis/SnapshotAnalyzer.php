@@ -63,7 +63,10 @@ final class SnapshotAnalyzer {
       }
       $project = $module['project'] ?? NULL;
       $version = $module['version'] ?? NULL;
-      if (!is_string($project) || $project === ''
+      // Agent payloads are untrusted: a project name that is not a valid
+      // drupal.org machine name would make the release client throw and the
+      // queue item would then be retried forever.
+      if (!is_string($project) || preg_match('/^[a-z0-9_]{1,128}$/', $project) !== 1
         || !is_string($version) || $version === ''
       ) {
         $has_complete_provenance = FALSE;
