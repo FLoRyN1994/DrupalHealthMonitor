@@ -73,9 +73,9 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Replace the generic administration/tool blocks in the left sidebar with a dedicated Health Monitor menu, test, and deploy to production
 
 ## M11 — Agent-key navigation
-- [~] Add permission-aware access to the Keys administration page from the Health Monitor sidebar, test, and deploy to production
+- [x] Add permission-aware access to the Keys administration page from the Health Monitor sidebar, test, and deploy to production (deployed with M13, 2026-11-25)
 
-## M12 — Publish `hm_agent` on drupal.org
+## M12 — Publish `hm_agent` on drupal.org (deferred: packaging artifacts done, publishing postponed; not needed for the portfolio goal)
 - [x] Audit `hm_agent` against current drupal.org full-project requirements
 - [x] Add module-level `README.md` (standard sections), `LICENSE.txt`
   (GPL-2.0-or-later), and `composer.json` (`drupal/hm_agent`, no contrib deps)
@@ -94,19 +94,26 @@ Update this file at the end of every session (see AGENTS.md).
 - [x] Data integrity: deleting a Site cascades to snapshots/findings/reports/uptime; a Client with Sites cannot be deleted
 - [x] Retention on cron: uptime rows > 90 days, snapshots > 30 days (latest per site always kept, 200 per run)
 - [x] Registration hook no longer alters administrator-created accounts
-- [x] nginx gzip, `composer audit` in CI, Drupal core 11.4.12 / Drush 13.8.1
+- [x] nginx gzip, `composer audit` in CI, Drupal core 11.4.13 (fixes SA-CORE-2026-017/018) / Drush 13.8.1 / Twig 3.31+
+- [x] Deployed to production 2026-11-25 (app + cron); `drush deploy` clean, live core 11.4.13
 - [x] Tests for all of the above; PHPUnit, PHPStan, PHPCS green
 
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
 
-- 2026-11-17, Claude — M13 audit on `feat/m13-audit` (see M13 list). All gates
-  green (67 tests). Gotchas: `SiteCheckScheduler` and `HmCoreHooks` constructors
-  gained arguments (autowired); kernel tests that delete Sites must install the
-  `hm_uptime_check` schema; existing Site rows with non-http URLs will now fail
-  form validation on edit (the runner already skips them with a warning). Not
-  yet deployed: merge to `main`, deploy, run `drush deploy`. Next ideas are in
-  the M13 PR description / final summary (notifications, uptime trend, etc.).
+- 2026-11-25, Claude — M13 merged (PR #19) and deployed to production (app and
+  cron, core 11.4.13, `drush deploy` clean). Gotchas: Railway did NOT auto-deploy
+  the merge; deploy manually with `railway redeploy --service app --from-source -y`
+  (and `--service cron`), or fix the GitHub trigger in the Railway dashboard.
+  `composer audit` in CI now fails on new advisories, so a red CI on an untouched
+  branch usually means "update core/twig". History was rewritten once on
+  2026-11-25 (root-commit author email, one co-author trailer) so every commit hash
+  changed; re-clone or `git fetch && git reset --hard origin/main` if you have an
+  old checkout. Earlier gotchas still apply: `SiteCheckScheduler` and
+  `HmCoreHooks` constructors gained autowired arguments; kernel tests that delete
+  Sites must install the `hm_uptime_check` schema; Site rows with non-http URLs
+  fail form validation on edit (the runner skips them with a warning). Next ideas:
+  notifications, uptime trend, fix Railway auto-deploy.
 
 - 2026-11-16, Claude — Scoped M12 (publishing `hm_agent` on drupal.org) after
   auditing it against current drupal.org full-project requirements (full
