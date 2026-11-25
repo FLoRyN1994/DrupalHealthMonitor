@@ -21,6 +21,23 @@ deterministic PHP, and turns the findings into a plain-English report. See
 [`docs/BLUEPRINT.md`](docs/BLUEPRINT.md) for the full scope, architecture diagram and
 why this differs from Warden, Status Dashboard and Upgrade Status.
 
+## What it does
+
+- **Fleet dashboard** with a 0–100 health score per site, severity-ordered findings,
+  and HTMX filters by environment, monitoring status, and health.
+- **Signed collection**: a core-only agent on each client site exposes module, core,
+  and PHP versions over an HMAC-signed endpoint; the monitor polls it from cron and
+  records every attempt as uptime history.
+- **Deterministic analysis** against drupal.org release data: security updates,
+  unsupported versions, regular updates, and Drupal 12 blockers (including optional
+  [Upgrade Status](https://www.drupal.org/project/upgrade_status) scan results).
+- **AI client reports** persisted as versioned entities; PHP computes the effort
+  estimate and the model only writes prose from verified evidence.
+- **MCP server** so Claude Desktop, Claude Code, or Codex can query the fleet with
+  four least-privilege tools.
+- **One-command install** through a Drupal recipe with demo content, plus a Docker
+  image that deploys to Railway.
+
 ## Architecture
 
 ```mermaid
@@ -127,24 +144,73 @@ many hours in total?”** Against the included demo data it answers that **Acme
 Production and Beacon Staging need work: two security updates, estimated at 5.5
 hours total**, grounded in `get_security_updates` rather than model guesswork.
 
+## Security model
+
+- **Signed agent requests.** HMAC-SHA256 over the timestamp and request path with a
+  five-minute, past-only window. Secrets live in the Key module and environment
+  variables, never in exported configuration or Git.
+- **Hostile-input hardening.** The monitor never follows redirects (so signed
+  headers cannot be forwarded elsewhere), reads remote bodies with a hard size cap
+  (2 MB from agents, 5 MB from drupal.org), accepts only `http`/`https` site URLs,
+  and validates every project name from an agent payload before using it.
+- **Least privilege.** Public registration creates a blocked account that an
+  administrator must activate; the resulting operator role carries one permission.
+  The MCP endpoint is OAuth-protected (`client_credentials`) with a dedicated role.
+- **Evidence-conservative findings.** An unreachable release feed or incomplete
+  agent payload never clears an existing alert.
+
+## Data lifecycle
+
+Cron queues one check per active site every five minutes and skips sites whose
+previous check is still pending, so a slow client cannot make the queue grow without
+bound. Uptime rows are kept for 90 days and snapshots for 30 days (each site's newest
+snapshot is always kept). Deleting a site removes its snapshots, findings, reports,
+and uptime history, and a client that still owns sites cannot be deleted.
+
+## Development
+
+```bash
+ddev exec bash -c 'export SIMPLETEST_DB=mysql://db:db@db/db && \
+  vendor/bin/phpunit -c web/core web/modules/custom'   # unit + kernel tests
+ddev exec vendor/bin/phpstan analyse                    # static analysis
+ddev exec vendor/bin/phpcs                              # Drupal coding standards
+ddev composer audit --locked                            # known advisories
+```
+
+GitHub Actions runs all four, validates `composer.json`, and builds the production
+Docker image on every pull request.
+
+| Path | Contents |
+| --- | --- |
+| `web/modules/custom/hm_core` | The monitor: entities, collection, analysis, dashboard, reports, MCP tools |
+| `web/modules/custom/hm_agent` | Core-only agent for client sites (Drupal `^10.3 \|\| ^11`) |
+| `web/themes/custom/hm_theme` | Theme with Single Directory Components |
+| `recipes/health_monitor` | Repeatable install recipe with demo content |
+| `docker/`, `scripts/` | Production image, nginx config, Railway deploy scripts |
+| `docs/`, `documentation/` | Blueprint, progress log, architectural decisions, per-milestone notes |
+
 ## Status
 
-The six-milestone MVP is complete and deployed. It includes custom operational
-entities, signed agent collection, queues and uptime history, drupal.org analysis,
-Drupal 12 readiness, health scoring, an HTMX/SDC dashboard, versioned AI reports,
-OAuth-protected MCP tools, a repeatable recipe, CI, and Railway deployment.
+The six-milestone MVP is complete and deployed: custom operational entities, signed
+agent collection, queues and uptime history, drupal.org analysis, Drupal 12
+readiness, health scoring, an HTMX/SDC dashboard, versioned AI reports,
+OAuth-protected MCP tools, a repeatable recipe, CI, and Railway deployment. A
+follow-up audit (M13) hardened remote requests, fixed finding ordering and dashboard
+caching, added data retention and integrity rules, and expanded the test suite.
 
 See [`docs/PROGRESS.md`](docs/PROGRESS.md) for the implementation history and
 [`docs/DECISIONS.md`](docs/DECISIONS.md) for the architectural record.
 
 ## What I'd do next
 
+- Alert on new critical findings and downtime (email, Slack, or webhook).
+- Show 30/90-day uptime percentages and health-score history per site.
+- Check SSL certificate and domain expiry during each probe.
 - Add a client-facing, role-scoped read-only portal.
 - Generate and schedule monthly PDF maintenance reports.
-- Send a Monday Slack or email fleet digest.
+- Let operators acknowledge or snooze findings with a reason and expiry.
 - Collect Lighthouse performance and accessibility scores.
 - Ingest Composer audit results for PHP dependency vulnerabilities.
-- Add AI Search over historical findings and reports.
 - Port to Drupal 12 when it ships and publish the migration notes.
 
 ## License

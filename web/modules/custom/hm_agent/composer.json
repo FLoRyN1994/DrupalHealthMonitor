@@ -1,0 +1,14 @@
+{
+    "name": "drupal/hm_agent",
+    "description": "Exposes a signed status snapshot for Drupal Health Monitor.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://www.drupal.org/project/hm_agent",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/hm_agent",
+        "source": "https://git.drupalcode.org/project/hm_agent"
+    },
+    "require": {
+        "php": ">=8.1"
+    }
+}

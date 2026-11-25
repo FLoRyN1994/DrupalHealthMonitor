@@ -11,6 +11,7 @@ use Drupal\hm_core\Analysis\HealthScoreUpdater;
 use Drupal\hm_core\Analysis\SnapshotAnalyzer;
 use Drupal\hm_core\Entity\Site;
 use Drupal\hm_core\Entity\Snapshot;
+use Drupal\hm_core\Http\BoundedBodyReader;
 use Drupal\key\KeyInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
@@ -25,6 +26,16 @@ final class SiteCheckRunner {
    * Agent endpoint path, included in the signed message.
    */
   private const AGENT_PATH = '/hm-agent/status';
+
+  /**
+   * Maximum accepted agent response size: 2 MB.
+   */
+  private const MAX_RESPONSE_BYTES = 2_000_000;
+
+  /**
+   * Maximum stored error message length.
+   */
+  private const MAX_ERROR_LENGTH = 1_000;
 
   /**
    * Constructs a site-check runner.
@@ -58,17 +69,29 @@ final class SiteCheckRunner {
       return;
     }
 
+    $base_url = rtrim((string) $site->get('base_url')->value, '/');
+    if (preg_match('#^https?://[^/?\#\s]+(/[^?\#\s]*)?$#i', $base_url) !== 1) {
+      $this->logger->warning('Site @site has an invalid base URL; only http and https are allowed.', [
+        '@site' => $site->label(),
+      ]);
+      return;
+    }
+
     $timestamp = $this->time->getCurrentTime();
     $signature = hash_hmac(
       'sha256',
       $timestamp . "\n" . self::AGENT_PATH,
       $secret,
     );
-    $url = rtrim((string) $site->get('base_url')->value, '/') . self::AGENT_PATH;
+    $url = $base_url . self::AGENT_PATH;
     $started_at = $this->time->getCurrentMicroTime();
 
     try {
       $response = $this->httpClient->request('GET', $url, [
+        // A redirect would forward the signed headers to another location,
+        // where they could be replayed against this agent within the
+        // signature's validity window.
+        'allow_redirects' => FALSE,
         'connect_timeout' => 5,
         'headers' => [
           'Accept' => 'application/json',
@@ -98,11 +121,17 @@ final class SiteCheckRunner {
 
     $http_status = $response->getStatusCode();
     $response_time = $this->elapsedMilliseconds($started_at);
-    $raw_payload = (string) $response->getBody();
+    $raw_payload = BoundedBodyReader::read($response->getBody(), self::MAX_RESPONSE_BYTES);
     $error = NULL;
     $snapshot = NULL;
 
-    if ($http_status >= 200 && $http_status < 300) {
+    if ($raw_payload === NULL) {
+      $error = 'The agent response exceeded 2 MB.';
+      $this->logger->warning('@site agent response exceeded the size limit.', [
+        '@site' => $site->label(),
+      ]);
+    }
+    elseif ($http_status >= 200 && $http_status < 300) {
       try {
         $payload = json_decode($raw_payload, TRUE, 512, JSON_THROW_ON_ERROR);
         if (!is_array($payload) || !$this->isValidPayload($payload)) {
@@ -266,7 +295,7 @@ final class SiteCheckRunner {
         'http_status' => $httpStatus,
         'response_time_ms' => $responseTime,
         'success' => (int) $success,
-        'error' => $error,
+        'error' => $error === NULL ? NULL : mb_substr($error, 0, self::MAX_ERROR_LENGTH),
       ])
       ->execute();
   }

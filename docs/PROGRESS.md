@@ -72,8 +72,65 @@ Update this file at the end of every session (see AGENTS.md).
 ## M10 — Focused application sidebar
 - [x] Replace the generic administration/tool blocks in the left sidebar with a dedicated Health Monitor menu, test, and deploy to production
 
+## M11 — Agent-key navigation
+- [~] Add permission-aware access to the Keys administration page from the Health Monitor sidebar, test, and deploy to production
+
+## M12 — Publish `hm_agent` on drupal.org
+- [x] Audit `hm_agent` against current drupal.org full-project requirements
+- [x] Add module-level `README.md` (standard sections), `LICENSE.txt`
+  (GPL-2.0-or-later), and `composer.json` (`drupal/hm_agent`, no contrib deps)
+- [ ] Create/confirm drupal.org account; check `hm_agent` short-name availability
+- [ ] Extract `web/modules/custom/hm_agent` into its own `git.drupalcode.org`
+  repo with GitLab CI for drupal.org's automated review
+- [ ] Create the full project on drupal.org and push the extracted history
+- [ ] (Later) apply for security advisory coverage once there is commit history
+
+## M13 — Project audit hardening
+- [x] Agent requests: no redirects (signed headers cannot leak), 2 MB body cap, http/https-only base URLs (entity constraint + runner check)
+- [x] Release feed: 5 MB streaming body cap; invalid agent project names no longer cause endless queue retries
+- [x] Queue: per-site pending marker prevents duplicate site-check items when the worker falls behind
+- [x] Findings: urgency ordering (critical → info) everywhere instead of alphabetical; unchanged findings are no longer re-saved (no needless cache invalidation)
+- [x] Dashboard: cache metadata merged correctly (query-arg contexts were lost); Reset link fully resets the filters
+- [x] Data integrity: deleting a Site cascades to snapshots/findings/reports/uptime; a Client with Sites cannot be deleted
+- [x] Retention on cron: uptime rows > 90 days, snapshots > 30 days (latest per site always kept, 200 per run)
+- [x] Registration hook no longer alters administrator-created accounts
+- [x] nginx gzip, `composer audit` in CI, Drupal core 11.4.12 / Drush 13.8.1
+- [x] Tests for all of the above; PHPUnit, PHPStan, PHPCS green
+
 ## Handoff notes
 _Latest session first. Who, date, what's half-done, what's next, gotchas._
+
+- 2026-11-17, Claude — M13 audit on `feat/m13-audit` (see M13 list). All gates
+  green (67 tests). Gotchas: `SiteCheckScheduler` and `HmCoreHooks` constructors
+  gained arguments (autowired); kernel tests that delete Sites must install the
+  `hm_uptime_check` schema; existing Site rows with non-http URLs will now fail
+  form validation on edit (the runner already skips them with a warning). Not
+  yet deployed: merge to `main`, deploy, run `drush deploy`. Next ideas are in
+  the M13 PR description / final summary (notifications, uptime trend, etc.).
+
+- 2026-11-16, Claude — Scoped M12 (publishing `hm_agent` on drupal.org) after
+  auditing it against current drupal.org full-project requirements (full
+  projects are now self-service, no sandbox/"git vetted" role needed).
+  `hm_agent` was already core-only with full unit/kernel test coverage
+  (`SignatureValidatorTest`, `StatusControllerTest`,
+  `UpgradeStatusCollectorTest`, `ServiceWiringTest`) and clean
+  PHPCS/PHPStan. Added the three artifacts a standalone contrib project
+  needs: an expanded `README.md` following the drupal.org module
+  documentation template (Introduction/Requirements/Installation/
+  Configuration/Maintainers), a `LICENSE.txt` copied from the repo root
+  (GPL-2.0-or-later), and a `composer.json` (`drupal/hm_agent`, type
+  `drupal-module`, no dependencies beyond PHP 8.1+). All three pass the
+  repo's PHPCS ruleset, which also lints `.md`/`.txt` line length. Full
+  `hm_agent` PHPUnit suite (11 tests, 37 assertions) and PHPStan still pass;
+  `composer validate` passes for both the root and the new module
+  `composer.json`. What remains is not code: creating/using a drupal.org
+  account, confirming the `hm_agent` short name is free, extracting the
+  module into its own `git.drupalcode.org` repo with drupal.org's GitLab CI
+  templates, and creating the full project there. Security advisory coverage
+  is a separate, later application once there's commit history on
+  drupal.org. This session did not touch M11; `hm_core.links.menu.yml` and
+  `HealthMonitorRecipeTest.php` have pre-existing uncommitted changes from
+  before this session that were not authored here.
 
 - 2026-11-16, Codex — Completed and deployed M10 through PR #17. The left
   sidebar now renders a dedicated locked Health Monitor menu containing only

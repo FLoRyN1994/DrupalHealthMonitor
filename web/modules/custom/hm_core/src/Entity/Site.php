@@ -68,7 +68,16 @@ final class Site extends HealthMonitorEntityBase {
 
     $fields['base_url'] = BaseFieldDefinition::create('uri')
       ->setLabel(new TranslatableMarkup('Base URL'))
+      ->setDescription(new TranslatableMarkup('The http or https address of the site, without the agent path.'))
       ->setRequired(TRUE)
+      // The URL is rendered as a link and requested by the monitor, so only
+      // web schemes are accepted (never javascript:, data:, file:, etc.).
+      ->addPropertyConstraints('value', [
+        'Regex' => [
+          'pattern' => '#^https?://[^/?\#\s]+(/[^?\#\s]*)?$#i',
+          'message' => 'The base URL must be an http or https address without a query string or fragment.',
+        ],
+      ])
       ->setDisplayOptions('form', ['type' => 'uri', 'weight' => 10])
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
